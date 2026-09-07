@@ -18,7 +18,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@eb7878207d02c63741ff5ab28231b4ecc5c8230e/want.css" />
+  <link rel="stylesheet" href="./want.css" id="want-css" />
+  <script>
+  (function(){
+    var el=document.getElementById("want-css");
+    var alts=["/shop/want.css","https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@eb7878207d02c63741ff5ab28231b4ecc5c8230e/want.css"];
+    var i=0;
+    if(el) el.onerror=function(){ if(i<alts.length) el.href=alts[i++]; };
+  })();
+  </script>
   <style>
     .house-logo {
       position: fixed;
@@ -452,11 +460,69 @@
     </form>
   </section>
   <button class="bag-dock" type="button" id="dock" hidden></button>
-  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-floor-web@9e4286226877d8e2a0e04519092848b74f5eb4d4/sentry.js"></script>
-  <script>try{sableSentry("want")}catch(e){}</script>
-  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@8d2f07a69af3a7fb3999ace87765575e147c9d61/catalog.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@0abe4b1376e49a3e89b80777e615a3b0e0c8f71c/golf-tone.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/want-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-floor-web@7bff5ed5dd88ab91adf221c7c76e26a599fd2ead/want-patch.js"></script>
+  <script>
+  (function(){
+    try{
+      if(navigator.serviceWorker){
+        navigator.serviceWorker.getRegistrations().then(function(rs){ rs.forEach(function(r){ r.unregister(); }); });
+      }
+      if(window.caches) caches.keys().then(function(ks){ ks.forEach(function(k){ caches.delete(k); }); });
+    }catch(e){}
+    var JSD="https://cdn.jsdelivr.net/gh/";
+    var chain=[
+      {name:"sentry", urls:["./sentry.js","/shop/sentry.js",JSD+"lensleyluan001-create/sable-floor-web@9e4286226877d8e2a0e04519092848b74f5eb4d4/sentry.js"]},
+      {name:"catalog", urls:["./catalog.js","/shop/catalog.js",JSD+"lensleyluan001-create/sable-desk-js@8d2f07a69af3a7fb3999ace87765575e147c9d61/catalog.js"]},
+      {name:"golf", urls:["./golf-tone.js","/shop/golf-tone.js",JSD+"lensleyluan001-create/sable-desk-js@0abe4b1376e49a3e89b80777e615a3b0e0c8f71c/golf-tone.js"]},
+      {name:"app", urls:["./want-app.js","/shop/want-app.js",JSD+"lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/want-app.js"]},
+      {name:"patch", urls:["./want-patch.js","/shop/want-patch.js",JSD+"lensleyluan001-create/sable-floor-web@main/want-patch.js"]}
+    ];
+    function loadOne(urls, i, ok, fail){
+      if(i>=urls.length) return fail();
+      var s=document.createElement("script");
+      s.src=urls[i];
+      s.onload=function(){ ok(); };
+      s.onerror=function(){ s.remove(); loadOne(urls, i+1, ok, fail); };
+      document.body.appendChild(s);
+    }
+    function next(n){
+      if(n>=chain.length){
+        try{ if(typeof sableSentry==="function") sableSentry("want"); }catch(e){}
+        try{
+          var CDN="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-looks@main/";
+          if(typeof viewHost==="function") viewHost=function(){ return CDN+"views/"; };
+          if(typeof PAIRS!=="undefined"){
+            for(var i=0;i<PAIRS.length;i++){
+              PAIRS[i].img=CDN+"views/"+PAIRS[i].sku+"-1.jpg?v=5";
+            }
+          }
+          if(typeof draw==="function") draw(false);
+        }catch(e){}
+        try{
+          if(location.hostname!=="sable-floor.vercel.app"){
+            var orig=window.fetch;
+            window.fetch=function(url, opts){
+              if(typeof url==="string" && url.indexOf("/api/lead")===0){
+                url="https://sable-floor.vercel.app"+url;
+              }
+              return orig.call(this, url, opts);
+            };
+          }
+        }catch(e){}
+        return;
+      }
+      loadOne(chain[n].urls, 0, function(){ next(n+1); }, function(){ next(n+1); });
+    }
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", function(){ next(0); });
+    else next(0);
+    setTimeout(function(){
+      if(typeof PAIRS==="undefined"){
+        var g=document.getElementById("grid");
+        if(g && !g.children.length){
+          g.innerHTML='<p class="hint" style="padding:24px">Could not open the collection on this network. <a href="https://wa.me/27826001950">WhatsApp Sable +27 82 600 1950</a></p>';
+        }
+      }
+    }, 8000);
+  })();
+  </script>
 </body>
 </html>
