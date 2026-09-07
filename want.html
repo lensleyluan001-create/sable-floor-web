@@ -469,12 +469,14 @@
       if(window.caches) caches.keys().then(function(ks){ ks.forEach(function(k){ caches.delete(k); }); });
     }catch(e){}
     var JSD="https://cdn.jsdelivr.net/gh/";
+    var onVercel=/vercel\.app$/.test(location.hostname);
+    function srcs(local, shop, jsd){ return onVercel ? [shop, jsd] : [local, shop, jsd]; }
     var chain=[
-      {name:"sentry", urls:["./sentry.js","/shop/sentry.js",JSD+"lensleyluan001-create/sable-floor-web@9e4286226877d8e2a0e04519092848b74f5eb4d4/sentry.js"]},
-      {name:"catalog", urls:["./catalog.js","/shop/catalog.js",JSD+"lensleyluan001-create/sable-desk-js@8d2f07a69af3a7fb3999ace87765575e147c9d61/catalog.js"]},
-      {name:"golf", urls:["./golf-tone.js","/shop/golf-tone.js",JSD+"lensleyluan001-create/sable-desk-js@0abe4b1376e49a3e89b80777e615a3b0e0c8f71c/golf-tone.js"]},
-      {name:"app", urls:["./want-app.js","/shop/want-app.js",JSD+"lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/want-app.js"]},
-      {name:"patch", urls:["./want-patch.js","/shop/want-patch.js",JSD+"lensleyluan001-create/sable-floor-web@main/want-patch.js"]}
+      {name:"sentry", urls:srcs("./sentry.js","/shop/sentry.js",JSD+"lensleyluan001-create/sable-floor-web@9e4286226877d8e2a0e04519092848b74f5eb4d4/sentry.js")},
+      {name:"catalog", urls:srcs("./catalog.js","/shop/catalog.js",JSD+"lensleyluan001-create/sable-desk-js@8d2f07a69af3a7fb3999ace87765575e147c9d61/catalog.js")},
+      {name:"golf", urls:srcs("./golf-tone.js","/shop/golf-tone.js",JSD+"lensleyluan001-create/sable-desk-js@0abe4b1376e49a3e89b80777e615a3b0e0c8f71c/golf-tone.js")},
+      {name:"app", urls:srcs("./want-app.js","/shop/want-app.js",JSD+"lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/want-app.js")},
+      {name:"patch", urls:srcs("./want-patch.js","/shop/want-patch.js",JSD+"lensleyluan001-create/sable-floor-web@main/want-patch.js")}
     ];
     function loadOne(urls, i, ok, fail){
       if(i>=urls.length) return fail();
