@@ -20,6 +20,19 @@
   ];
   window.__shopGroup = window.__shopGroup || "";
 
+  const TWO_TONE_SKU = "45090";
+  const _isGolferLook = typeof isGolfer === "function" ? isGolfer : function () { return false; };
+  function twoToneOn() {
+    if (typeof screen === "undefined") return false;
+    if (screen !== "pair" && screen !== "order") return false;
+    const p = typeof selected === "function" ? selected() : null;
+    return !!(p && String(p.sku) === TWO_TONE_SKU && _isGolferLook(p.look));
+  }
+  isGolfer = function (look) {
+    if (!_isGolferLook(look)) return false;
+    return twoToneOn();
+  };
+
   function displayLook(look) {
     if (look === "Thong") return "Sandal";
     if (look === "Wool-lined boot") return "Wool boot";
@@ -239,6 +252,13 @@
       const look = String(meta.textContent || "").split(" ·")[0];
       stock.textContent = displayLook(look);
       meta.textContent = "No. " + sku;
+      if (sku === TWO_TONE_SKU) {
+        const tag = document.createElement("span");
+        tag.className = "nametag";
+        tag.textContent = "Two-tone";
+        stock.appendChild(document.createTextNode(" "));
+        stock.appendChild(tag);
+      }
     });
     document.querySelectorAll("#grid .cat").forEach(function (sec) {
       if (!sec.querySelector(".swipe-hint")) {
@@ -258,6 +278,13 @@
   if (typeof drawHero === "function") {
     const _drawHero = drawHero;
     drawHero = function () {
+      const p0 = typeof selected === "function" ? selected() : null;
+      const tone = !!(p0 && String(p0.sku) === TWO_TONE_SKU && _isGolferLook(p0.look));
+      if (tone) {
+        if (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) hide = "book";
+      } else if (String(hide || "").indexOf("tt:") === 0) {
+        hide = "book";
+      }
       _drawHero();
       const img = document.querySelector("#hero .turn img");
       if (img) {
@@ -275,15 +302,19 @@
           const tags = stock.querySelectorAll(".nametag");
           stock.textContent = displayLook(p.look) + " ";
           tags.forEach(function (t) { stock.appendChild(t); });
-          meta.textContent = "No. " + p.sku + (size ? " · UK " + size + (UK_EU[size] ? " / EU " + UK_EU[size] : "") : " · size open") + (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0 ? " · " + hideName(hide) : "") + (extraLabel(extras) ? " · " + extraLabel(extras) : "");
+          meta.textContent = "No. " + p.sku + (size ? " · UK " + size + (UK_EU[size] ? " / EU " + UK_EU[size] : "") : " · size open") + (hide && hide !== "book" ? " · " + hideName(hide) : "") + (extraLabel(extras) ? " · " + extraLabel(extras) : "");
         }
       }
       const hint = document.querySelector("#hero .hint");
       if (hint) {
-        if (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) {
-          hint.textContent = "Preview only — the photo is tinted. Final hide depends on the tannery.";
-        } else {
-          hint.textContent = "As photographed. Other hides tint the photo so you can see the idea.";
+        const p = typeof selected === "function" ? selected() : null;
+        const keepTone = p && String(p.sku) === TWO_TONE_SKU && _isGolferLook(p.look);
+        if (!keepTone) {
+          if (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) {
+            hint.textContent = "Preview only — the photo is tinted. Final hide depends on the tannery.";
+          } else {
+            hint.textContent = "As photographed. Other hides tint the photo so you can see the idea.";
+          }
         }
       }
       document.querySelectorAll("#hero .hides .hide, #hero [data-whide]").forEach(function (b) {
