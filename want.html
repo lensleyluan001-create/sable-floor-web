@@ -172,6 +172,66 @@
     .need-help:focus-visible { outline: 2px solid #1c1814; outline-offset: 3px; }
     body.on-pair .need-help,
     body.on-order .need-help { display: none; }
+
+    #grid .cat { position: relative; }
+    #grid .cat h2 { margin: 0 16px 4px; }
+    #grid .swipe-hint {
+      margin: 0 16px 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--muted, #6f675e);
+    }
+    #grid .shelf {
+      display: flex !important;
+      gap: 12px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 16px;
+      padding-inline: 16px !important;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      cursor: grab;
+      user-select: none;
+    }
+    #grid .shelf::-webkit-scrollbar { display: none; }
+    #grid .shelf:active { cursor: grabbing; }
+    #grid .tile {
+      flex: 0 0 min(78vw, 20rem);
+      scroll-snap-align: start;
+      max-width: 20rem;
+    }
+    .laser-burn {
+      position: absolute;
+      z-index: 3;
+      margin: 0;
+      font-family: Fraunces, "Iowan Old Style", Palatino, serif;
+      font-size: clamp(1.05rem, 3.8vw, 1.55rem);
+      font-weight: 600;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgb(52 28 16 / 0.74);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+    .laser-scan {
+      pointer-events: none;
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      height: 2px;
+      z-index: 2;
+      background: linear-gradient(90deg, transparent, rgb(255 86 42 / 0.9), transparent);
+      animation: laserScan 0.95s ease both;
+    }
+    @keyframes laserScan {
+      0% { top: 16%; opacity: 0; }
+      14% { opacity: 1; }
+      100% { top: 78%; opacity: 0; }
+    }
+    #ex-laser { margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -181,7 +241,7 @@
     <div class="brand">SABLE</div>
     <a class="need-help" href="/how">Need help with ordering?</a>
     <h1>Sable collection 2026</h1>
-    <p class="sub">Ninety-two pairs, cut and lasted by us. Open a pair, spin it, pick UK size and hide, extras if you want them. Add it to the order — then another last, or the same one again. Name and WhatsApp at the end. We reply on WhatsApp with the listed rand. No card on this page. The pairs are confirmed when you pay.</p>
+    <p class="sub">Ninety-two pairs, cut and lasted by us. Swipe the photos. Open a pair, spin it, pick UK size and hide, extras if you want them. Laser sits on the outside if you want a mark. Add it to the order — then another last, or the same one again. Name and WhatsApp at the end. We reply on WhatsApp with the listed rand. No card on this page. The pairs are confirmed when you pay.</p>
     <div class="how" aria-label="How to order">
       <p><span>1</span> Pick the pair</p>
       <p><span>2</span> Add to the order</p>
@@ -211,7 +271,7 @@
         <textarea id="custom-note" placeholder="What to change on the pair."></textarea>
         <p class="meta">Custom is quoted. Sable will confirm.</p>
       </div>
-      <p class="hint extra-hint">Laces and stitching are R50 each. Custom depends on the work. Written on the order, not drawn on the photo.</p>
+      <p class="hint extra-hint">Laces and stitching are R50 each. Laser is quoted, outside only. Custom depends on the work. Written on the order, not drawn on the listed rand.</p>
       <button class="solid" type="button" id="add">Add to order</button>
       <button class="ghost" type="button" id="more">Add another pair</button>
       <p id="added" class="ok" hidden></p>
@@ -247,5 +307,6 @@
   <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@8d2f07a69af3a7fb3999ace87765575e147c9d61/catalog.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@0abe4b1376e49a3e89b80777e615a3b0e0c8f71c/golf-tone.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/want-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-floor-web@main/want-patch.js"></script>
 </body>
 </html>
