@@ -8,6 +8,25 @@
     Quarter: "top:48%;right:12%",
     Vamp: "top:52%;left:50%;transform:translateX(-50%)"
   };
+  const UK_EU = { "3": "35.5", "4": "37", "5": "38", "6": "39", "7": "41", "8": "42", "9": "43", "10": "44.5", "11": "46", "12": "47", "13": "48.5" };
+  const GROUPS = [
+    { id: "", label: "All", looks: null },
+    { id: "Vellies", label: "Vellies", looks: ["Vellie", "Wool-lined vellie"] },
+    { id: "Golfers", label: "Golfers", looks: ["Golfer"] },
+    { id: "Boots", label: "Boots", looks: ["Chelsea", "Hiking boot", "Combat boot", "Zip boot", "Wool-lined boot"] },
+    { id: "Derbies", label: "Derbies", looks: ["Derby", "Loafer"] },
+    { id: "Sandals", label: "Sandals", looks: ["Sandal", "Thong"] },
+    { id: "Kids", label: "Kids", looks: ["Kids vellie", "Kids derby"] }
+  ];
+  window.__shopGroup = window.__shopGroup || "";
+
+  function displayLook(look) {
+    if (look === "Thong") return "Sandal";
+    if (look === "Wool-lined boot") return "Wool boot";
+    if (look === "Wool-lined slipper") return "Wool slipper";
+    if (look === "Wool-lined vellie") return "Wool vellie";
+    return look || "";
+  }
 
   const _extraFix = extraFix;
   extraFix = function (e) {
@@ -23,6 +42,7 @@
     e = extraFix(e);
     qty = Number(qty || 1) || 1;
     let n = 0;
+    if (e.laser) n += EXTRA_FEE;
     if (e.laces) n += EXTRA_FEE;
     if (e.stitch) n += EXTRA_FEE;
     n += e.customFee;
@@ -47,9 +67,9 @@
     const place = String(e.laserPlace || "Heel").toLowerCase();
     const kind = String(e.laserKind || "Initials").toLowerCase();
     const text = String(e.laserText || "").trim();
-    if (kind === "logo") return "Laser: logo on " + place + " (outside, quoted)";
-    if (!text) return "Laser: " + kind + " on " + place + " (outside, quoted)";
-    return "Laser: " + kind + ' "' + text + '" on ' + place + " (outside, quoted)";
+    if (kind === "logo") return "Laser: logo on " + place + " (outside, R50)";
+    if (!text) return "Laser: " + kind + " on " + place + " (outside, R50)";
+    return "Laser: " + kind + ' "' + text + '" on ' + place + " (outside, R50)";
   }
 
   function laserPreview(e) {
@@ -92,8 +112,8 @@
     box.id = "ex-laser";
     box.hidden = true;
     box.innerHTML =
-      '<p class="meta">Laser — outside only</p>' +
-      '<p class="hint">Heel, quarter, or vamp. We confirm the mark, then the beam writes it into the grain. Quoted.</p>' +
+      '<p class="meta">Laser — R50, outside only</p>' +
+      '<p class="hint">Heel, quarter, or vamp. Initials and a name are R50. A logo we confirm before we burn.</p>' +
       '<label>The mark</label><div class="chips" id="laser-kinds" style="padding:0;max-width:none"></div>' +
       '<div id="laser-text-wrap"><label id="laser-text-label">Initials</label>' +
       '<input id="laser-text" maxlength="4" placeholder="LL" autocomplete="off" /></div>' +
@@ -122,7 +142,7 @@
       btn.className = "chip" + (extras.laser ? " on" : "");
       btn.type = "button";
       btn.setAttribute("data-ex", "laser");
-      btn.textContent = "Laser · quoted";
+      btn.textContent = "Laser · R50";
       btn.onclick = function () {
         extras.laser = !extras.laser;
         if (typeof drawHero === "function") drawHero();
@@ -131,7 +151,10 @@
       row.appendChild(btn);
     } else if (row) {
       const btn = row.querySelector('[data-ex="laser"]');
-      if (btn) btn.classList.toggle("on", !!extras.laser);
+      if (btn) {
+        btn.classList.toggle("on", !!extras.laser);
+        btn.textContent = "Laser · R50";
+      }
     }
     const panel = document.getElementById("ex-laser");
     if (panel) panel.hidden = !extras.laser;
@@ -177,19 +200,53 @@
       });
     }
     const hint = document.querySelector(".extra-hint");
-    if (hint) hint.textContent = "Laces and stitching are R50 each. Laser is quoted, outside only. Custom depends on the work. Written on the order, not drawn on the listed rand.";
+    if (hint) hint.textContent = "Laser, laces and stitching are R50 each. Custom is quoted. Written on the order.";
   };
+
+  if (typeof drawTypes === "function") {
+    drawTypes = function () {
+      const box = document.getElementById("types");
+      if (!box) return;
+      box.innerHTML = GROUPS.map(function (g) {
+        return '<button class="chip ' + (window.__shopGroup === g.id ? "on" : "") + '" type="button" data-g="' + g.id + '">' + g.label + "</button>";
+      }).join("");
+      box.querySelectorAll("[data-g]").forEach(function (b) {
+        b.onclick = function () {
+          window.__shopGroup = b.getAttribute("data-g") || "";
+          type = "";
+          if (typeof draw === "function") draw();
+        };
+      });
+    };
+  }
 
   const _drawGrid = drawGrid;
   drawGrid = function () {
     _drawGrid();
+    const group = GROUPS.find(function (g) { return g.id === window.__shopGroup; });
+    const allow = group && group.looks;
+    document.querySelectorAll("#grid .cat").forEach(function (sec) {
+      const h = sec.querySelector("h2");
+      const name = h ? String(h.textContent || "") : "";
+      if (allow && allow.indexOf(name) < 0) sec.remove();
+      else if (h) h.textContent = displayLook(name);
+    });
+    document.querySelectorAll("#grid .tile").forEach(function (tile) {
+      const stock = tile.querySelector(".stock");
+      const meta = tile.querySelector(".meta");
+      if (!stock || !meta) return;
+      const sku = String(stock.textContent || "").replace(/Custom|Two-tone/g, "").trim();
+      const look = String(meta.textContent || "").split(" ·")[0];
+      stock.textContent = displayLook(look);
+      meta.textContent = "No. " + sku;
+    });
     document.querySelectorAll("#grid .cat").forEach(function (sec) {
       if (!sec.querySelector(".swipe-hint")) {
         const h = sec.querySelector("h2");
         if (h) {
           const s = document.createElement("p");
           s.className = "swipe-hint";
-          s.textContent = "Swipe";
+          s.textContent = "Swipe the pairs";
           h.insertAdjacentElement("afterend", s);
         }
       }
@@ -197,6 +254,57 @@
       if (shelf) bindDrag(shelf);
     });
   };
+
+  if (typeof drawHero === "function") {
+    const _drawHero = drawHero;
+    drawHero = function () {
+      _drawHero();
+      const img = document.querySelector("#hero .turn img");
+      if (img) {
+        img.classList.remove("hide-tan", "hide-brown", "hide-dark", "hide-black", "hide-olive");
+        if (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) {
+          const cls = hide === "dark" ? "hide-dark" : "hide-" + hide;
+          img.classList.add(cls);
+        }
+      }
+      const stock = document.querySelector("#hero .stock");
+      const meta = document.querySelector("#hero .meta");
+      if (stock && meta && typeof selected === "function") {
+        const p = selected();
+        if (p) {
+          const tags = stock.querySelectorAll(".nametag");
+          stock.textContent = displayLook(p.look) + " ";
+          tags.forEach(function (t) { stock.appendChild(t); });
+          meta.textContent = "No. " + p.sku + (size ? " · UK " + size + (UK_EU[size] ? " / EU " + UK_EU[size] : "") : " · size open") + (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0 ? " · " + hideName(hide) : "") + (extraLabel(extras) ? " · " + extraLabel(extras) : "");
+        }
+      }
+      const hint = document.querySelector("#hero .hint");
+      if (hint && hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) {
+        hint.textContent = "Preview only — the photo is tinted. Final hide depends on the tannery.";
+      }
+    };
+  }
+
+  if (typeof drawSizes === "function") {
+    const _drawSizes = drawSizes;
+    drawSizes = function () {
+      _drawSizes();
+      const box = document.getElementById("sizes");
+      if (!box) return;
+      box.querySelectorAll("[data-size]").forEach(function (b) {
+        const s = b.getAttribute("data-size") || "";
+        if (!s) b.textContent = "Later";
+        else b.textContent = UK_EU[s] ? "UK " + s + " · EU " + UK_EU[s] : "UK " + s;
+      });
+      if (!document.getElementById("size-guide")) {
+        const p = document.createElement("p");
+        p.id = "size-guide";
+        p.className = "hint";
+        p.textContent = "Sizes are UK. EU is next to each one. Between sizes? Take the larger.";
+        box.insertAdjacentElement("afterend", p);
+      }
+    };
+  }
 
   function bindDrag(el) {
     if (el.getAttribute("data-drag") === "1") return;
@@ -210,18 +318,20 @@
     el.addEventListener("pointermove", function (e) {
       if (!on) return;
       const dx = e.clientX - x;
-      if (Math.abs(dx) > 6) moved = true;
+      if (Math.abs(dx) > 16) moved = true;
       el.scrollLeft = left - dx;
     });
     function end() {
       if (!on) return;
       on = false;
+      const elDx = Math.abs(el.scrollLeft - left);
+      if (elDx < 16) moved = false;
       const kids = Array.prototype.slice.call(el.children);
       if (!kids.length) return;
       const target = kids.reduce(function (best, node) {
-        return Math.abs(node.offsetLeft - el.scrollLeft) < Math.abs(best - el.scrollLeft) ? node.offsetLeft : best;
-      }, kids[0].offsetLeft);
-      el.scrollTo({ left: target, behavior: "smooth" });
+        return Math.abs(node.offsetLeft - el.scrollLeft) < Math.abs(best.offsetLeft - el.scrollLeft) ? node : best;
+      }, kids[0]);
+      el.scrollTo({ left: target.offsetLeft, behavior: "smooth" });
     }
     el.addEventListener("pointerup", end);
     el.addEventListener("pointercancel", end);
@@ -232,10 +342,24 @@
     }, true);
   }
 
+  const h1 = document.querySelector("header h1");
+  if (h1) h1.textContent = "Leather shoes. Yours to pick.";
   const sub = document.querySelector("header .sub");
   if (sub) {
-    sub.textContent = "Ninety-two pairs, cut and lasted by us. Swipe the photos. Open a pair, spin it, pick UK size and hide, extras if you want them. Laser sits on the outside if you want a mark. Add it to the order — then another last, or the same one again. Name and WhatsApp at the end. We reply on WhatsApp with the listed rand. No card on this page.";
+    sub.textContent = "Tap a pair. Choose size. We WhatsApp you — then you pay once we confirm it. Most pairs leave 10–14 working days after EFT. Collect is free. Send in SA is R100.";
   }
+  const help = document.querySelector(".need-help");
+  if (help) help.textContent = "How an order works";
+  const how = document.querySelector("header .how");
+  if (how) {
+    how.innerHTML = "<p><span>1</span> Pick the pair</p><p><span>2</span> Add more if you want</p><p><span>3</span> Send. We WhatsApp you</p>";
+  }
+  const addBtn = document.getElementById("add");
+  if (addBtn) addBtn.textContent = "Add this pair";
+  const more = document.getElementById("more");
+  if (more) more.textContent = "Add another pair";
+  const submit = document.querySelector("#want button[type=submit]");
+  if (submit) submit.textContent = "Send to Sable";
 
   if (typeof draw === "function") draw(false);
 })();
