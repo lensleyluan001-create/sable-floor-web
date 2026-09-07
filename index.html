@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f1ebe1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="SABLE CRM" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>SABLE CRM</title>
+  <link rel="manifest" href="./manifest.json?v=20260906sentry" />
+  <link rel="apple-touch-icon" href="./icon-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@4ced57033ad8cc487a38a90dec660c66092fad10/sable.css" />
+  <style>
+    #root { visibility: hidden; }
+    #root.is-on { visibility: visible; }
+    body.js-on #door { display: none !important; }
+    #door {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: calc(48px + env(safe-area-inset-top, 0px)) 20px 40px;
+      font-family: Figtree, "Segoe UI", system-ui, sans-serif;
+      color: #1c1814;
+    }
+    #door .brand {
+      font-family: Fraunces, "Iowan Old Style", Palatino, serif;
+      letter-spacing: .28em;
+      font-size: 12px;
+    }
+    #door h1 { font-family: Fraunces, "Iowan Old Style", Palatino, serif; margin: 12px 0 8px; }
+    #door .sub { color: #6f675e; font-size: 14px; }
+    #door label { display: block; margin: 12px 0 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+    #door input {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid color-mix(in srgb, #1c1814 16%, transparent);
+      border-radius: 12px;
+      background: #faf7f1;
+      font: inherit;
+    }
+    #door button.solid {
+      width: 100%;
+      margin-top: 16px;
+      min-height: 44px;
+      border: 0;
+      border-radius: 12px;
+      background: #1c1814;
+      color: #f1ebe1;
+      font: inherit;
+      font-weight: 600;
+    }
+    #door .err { color: #8a2b2b; }
+    .go-back {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      left: 14px;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 14px 0 12px;
+      border: 0;
+      border-radius: 12px;
+      background: #faf7f1;
+      color: #1c1814;
+      box-shadow: 0 0 0 1px color-mix(in srgb, #1c1814 12%, transparent), 0 8px 18px color-mix(in srgb, #1c1814 8%, transparent);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: Figtree, "Segoe UI", system-ui, sans-serif;
+    }
+    .go-back::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-left: 1.7px solid currentColor;
+      border-bottom: 1.7px solid currentColor;
+      transform: rotate(45deg);
+    }
+    .go-back:focus-visible { outline: 2px solid #1c1814; outline-offset: 3px; }
+    .gate { padding-top: 28px; }
+    .desk-back { margin: 0 0 12px; min-height: 44px; }
+  </style>
+</head>
+<body>
+  <a class="go-back" href="/want" id="door-back">Collection</a>
+  <div id="door">
+    <div class="brand">SABLE CRM</div>
+    <h1>Log in</h1>
+    <p class="sub">Staff only. Password lives on this phone. Name can stay blank.</p>
+    <form id="door-in">
+      <label>Email or staff name</label>
+      <input name="email" placeholder="Luan, Dylan or Wian — can stay blank" autocomplete="username" autocapitalize="none" spellcheck="false" />
+      <label>Password</label>
+      <input name="password" type="password" autocomplete="current-password" placeholder="Password" />
+      <button class="solid" type="submit">Enter</button>
+    </form>
+    <p class="err" id="door-msg" hidden></p>
+    <p class="sub" style="margin-top:22px">Looking for the pairs? <a class="client-link" href="/want">Open the collection</a></p>
+  </div>
+  <div id="root"></div>
+  <script src="./sentry.js?v=20260906sentry"></script>
+  <script>try{sableSentry("staff")}catch(e){}</script>
+  <script>
+    (function () {
+      var KEY = "sable-crm-v4";
+      var path = (location.pathname || "/").replace(/\/+$/, "") || "/";
+      var q = location.search || "";
+      var door = path === "/login" || /[?&](door|desk|login)=/.test(q) || /(?:^|#)login/.test(location.hash || "");
+      var session = false;
+      try {
+        var s = JSON.parse(localStorage.getItem(KEY) || "null");
+        session = !!(s && s.session);
+      } catch (e) {}
+      if (!session && !door) {
+        location.replace("/want");
+        return;
+      }
+      var PASS_REV = 2;
+      function staffOf(id) {
+        var qn = String(id || "").trim().toLowerCase().replace(/^@/, "");
+        if (!qn) return { email: "lensleyluan001@gmail.com", name: "Luan Lensley", role: "admin", seller: "luan" };
+        if (qn.indexOf("dylan") === 0 || qn === "dylan.do80@gmail.com") return { email: "dylan.do80@gmail.com", name: "Dylan", role: "sales", seller: "dylan" };
+        if (qn.indexOf("wian") === 0) return { email: "wian", name: "Wian", role: "sales", seller: "wian" };
+        return { email: "lensleyluan001@gmail.com", name: "Luan Lensley", role: "admin", seller: "luan" };
+      }
+      function samePass(a, b) {
+        return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+      }
+      function readPack() {
+        var pack = { session: null, users: [], requests: [], leads: [], meetings: [], invoices: [], bank: {}, passRev: 0 };
+        try {
+          var prev = JSON.parse(localStorage.getItem(KEY) || "null");
+          if (prev && typeof prev === "object") pack = prev;
+        } catch (err) {}
+        if (!pack.users) pack.users = [];
+        if (pack.passRev !== PASS_REV) {
+          pack.users.forEach(function (u) { if (u) u.password = ""; });
+          pack.passRev = PASS_REV;
+          pack.session = null;
+          try { localStorage.setItem(KEY, JSON.stringify(pack)); } catch (err) {}
+        }
+        return pack;
+      }
+      function hasPass(pack) {
+        return (pack.users || []).some(function (u) { return u && String(u.password || "").trim().length >= 8; });
+      }
+      function writePack(pack) {
+        try { localStorage.setItem(KEY, JSON.stringify(pack)); } catch (err) {}
+      }
+      var form = document.getElementById("door-in");
+      var pack0 = readPack();
+      session = !!(pack0 && pack0.session);
+      if (!session && !door) {
+        location.replace("/want");
+        return;
+      }
+      if (!hasPass(pack0)) {
+        var h = document.querySelector("#door h1");
+        var sub = document.querySelector("#door .sub");
+        var btn = form && form.querySelector("button");
+        var lab = form && form.querySelector("label:nth-of-type(2)");
+        var pin = form && form.password;
+        if (h) h.textContent = "Set a password";
+        if (sub) sub.textContent = "This phone only. Eight characters or more. Name can stay blank.";
+        if (lab) lab.textContent = "New password";
+        if (pin) pin.placeholder = "Eight characters or more";
+        if (btn) btn.textContent = "Set password and enter";
+      }
+      if (form) form.onsubmit = function (e) {
+        e.preventDefault();
+        var id = String((form.email && form.email.value) || "").trim();
+        var pass = String((form.password && form.password.value) || "").trim();
+        var msg = document.getElementById("door-msg");
+        var pack = readPack();
+        function fail(t) {
+          if (msg) { msg.hidden = false; msg.textContent = t; }
+        }
+        if (!pass) { fail("Type a password."); return; }
+        var who = staffOf(id);
+        if (!hasPass(pack)) {
+          if (pass.length < 8) { fail("Eight characters or more."); return; }
+          var users = pack.users || [];
+          var i = -1;
+          for (var n = 0; n < users.length; n++) {
+            var u = users[n];
+            if (u && String(u.email || "").toLowerCase() === who.email) i = n;
+          }
+          if (i < 0) { who.password = pass; who.status = "approved"; users.push(who); }
+          else { users[i].password = pass; who = users[i]; }
+          pack.users = users;
+          pack.passRev = PASS_REV;
+          pack.session = { email: who.email, name: who.name, role: who.role, seller: who.seller };
+          writePack(pack);
+          location.replace("/login");
+          return;
+        }
+        var hit = null;
+        var qn = id.toLowerCase().replace(/^@/, "");
+        (pack.users || []).forEach(function (u) {
+          if (!u || !u.password) return;
+          if (qn && String(u.email || "").toLowerCase() !== qn && String(u.name || "").toLowerCase() !== qn && String(u.seller || "").toLowerCase() !== qn && String((u.name || "").split(" ")[0]).toLowerCase() !== qn) return;
+          if (samePass(pass, u.password)) hit = u;
+        });
+        if (!hit && !qn) {
+          var hits = (pack.users || []).filter(function (u) { return u && u.password && samePass(pass, u.password); });
+          if (hits.length === 1) hit = hits[0];
+        }
+        if (!hit) { fail("Wrong login. Set a password on this phone if you have not yet."); return; }
+        pack.session = { email: hit.email, name: hit.name, role: hit.role || "sales", seller: hit.seller || "luan" };
+        writePack(pack);
+        location.replace("/login");
+      };
+      setTimeout(function () {
+        var root = document.getElementById("root");
+        if (root && !root.classList.contains("is-on")) {
+          var d = document.getElementById("door");
+          if (d) d.hidden = false;
+          document.body.classList.remove("js-on");
+          var msg = document.getElementById("door-msg");
+          if (msg) {
+            msg.hidden = false;
+            msg.textContent = session ? "Desk did not load. Type your password." : "Set a password on this phone.";
+          }
+        }
+      }, 2500);
+    })();
+  </script>
+  <script>
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.getRegistrations().then(function (rs) {
+        rs.forEach(function (r) { r.unregister(); });
+      }).catch(function () {});
+      navigator.serviceWorker.register("/sw.js?v=20260906sentry").catch(function () {});
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@eb7878207d02c63741ff5ab28231b4ecc5c8230e/catalog.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@eb7878207d02c63741ff5ab28231b4ecc5c8230e/golf-tone.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@705d163bd116b62e9cad32834f081c22ae4524b5/core.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@4ced57033ad8cc487a38a90dec660c66092fad10/views.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/boot.js"></script>
+  <script src="./patch.js?v=20260906sentry"></script>
+</body>
+</html>

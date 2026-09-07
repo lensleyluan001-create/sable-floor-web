@@ -1,0 +1,33 @@
+{
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/login/", "destination": "/index.html" },
+    { "source": "/desk", "destination": "/index.html?desk=1" },
+    { "source": "/desk/", "destination": "/index.html?desk=1" },
+    { "source": "/how", "destination": "/how.html" },
+    { "source": "/how/", "destination": "/how.html" },
+    { "source": "/want", "destination": "/want.html" },
+    { "source": "/want/", "destination": "/want.html" },
+    { "source": "/enquire", "destination": "/want.html" },
+    { "source": "/enquire/", "destination": "/want.html" },
+    { "source": "/enquire.html", "destination": "/want.html" },
+    { "source": "/lookbook", "destination": "/want.html" },
+    { "source": "/lookbook/", "destination": "/want.html" },
+    { "source": "/book", "destination": "/want.html" },
+    { "source": "/client", "destination": "/want.html" },
+    { "source": "/ask", "destination": "/want.html" },
+    { "source": "/order", "destination": "/want.html" },
+    { "source": "/track", "destination": "/track.html" },
+    { "source": "/track/", "destination": "/track.html" },
+    { "source": "/track/:ref", "destination": "/track.html?t=:ref" }
+  ]
+}
