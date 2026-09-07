@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#16110e" />
-  <title>SABLE — How we work</title>
-  <meta name="description" content="Order. Confirm. Last. Burn. Pack. Send. How a Sable pair leaves the bench." />
+  <title>SABLE — How an order works</title>
+  <meta name="description" content="Tap a pair. We WhatsApp you. Pay after we confirm. Most pairs leave in 10–14 working days." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
@@ -16,32 +16,28 @@
       --paper-2: #d7ccb8;
       --dust: #c6b396;
       --line: rgb(232 223 208 / 0.18);
-      --ease: cubic-bezier(0.22, 1, 0.36, 1);
     }
     * { box-sizing: border-box; }
     html, body {
       margin: 0;
-      height: 100%;
       background: var(--ink);
       color: var(--paper);
       font-family: Figtree, "Segoe UI", system-ui, sans-serif;
-      overflow: hidden;
+      overflow-x: hidden;
     }
     button { font: inherit; color: inherit; cursor: pointer; }
-    .stage { position: fixed; inset: 0; overflow: hidden; touch-action: none; }
+    #spacer { pointer-events: none; }
+    .stage { position: fixed; inset: 0; overflow: hidden; }
     .layer {
       position: absolute; inset: 0;
       opacity: 0; visibility: hidden;
-      transition: opacity 380ms var(--ease);
     }
-    .layer.on { opacity: 1; visibility: visible; }
     .layer img, .layer video {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       object-fit: cover;
+      transform: scale(1.08);
     }
-    .layer.on img.ken { animation: ken 9s var(--ease) forwards; transform: scale(1.08); }
-    @keyframes ken { to { transform: scale(1); } }
     .scrim {
       position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(to top, rgb(22 17 14 / 0.78) 0%, rgb(22 17 14 / 0.28) 38%, transparent 78%);
@@ -53,183 +49,197 @@
     header {
       position: absolute; inset: 0 auto auto 0; z-index: 3;
       padding: calc(20px + env(safe-area-inset-top)) 20px 0;
-      max-width: 640px; pointer-events: none;
+      max-width: 640px;
     }
-    .mark { margin: 0; letter-spacing: .32em; font-size: 11px; font-weight: 600; }
+    .mark {
+      margin: 0;
+      letter-spacing: .32em;
+      font-size: 11px;
+      font-weight: 600;
+    }
     .back {
-      pointer-events: auto;
-      display: inline-flex; align-items: center;
-      min-height: 44px; margin-top: 12px; padding: 0 16px;
-      background: var(--paper); color: var(--ink);
-      text-decoration: none; letter-spacing: .14em;
-      text-transform: uppercase; font-size: 11px; font-weight: 600;
-    }
-    .count {
-      position: absolute; right: 20px; top: calc(20px + env(safe-area-inset-top));
-      letter-spacing: .16em; text-transform: uppercase; font-size: 11px; color: var(--dust);
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      margin-top: 12px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 600;
     }
     .kicker {
-      margin: 24px 0 0; letter-spacing: .28em; text-transform: uppercase;
-      font-size: 11px; color: var(--dust);
+      margin: 24px 0 0;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--dust);
     }
     .why {
       margin: 8px 0 0;
       font-family: Fraunces, "Iowan Old Style", Palatino, serif;
-      font-size: 20px; font-weight: 500; letter-spacing: -.02em;
-      line-height: 1.25; max-width: 18em;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -.02em;
+      line-height: 1.25;
+      max-width: 18em;
     }
     .copy {
       position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
-      padding: 0 20px calc(20px + env(safe-area-inset-bottom));
-      max-width: 720px; pointer-events: none;
+      padding: 0 20px calc(24px + env(safe-area-inset-bottom));
+      max-width: 640px;
     }
     .copy h1 {
       margin: 0;
       font-family: Fraunces, "Iowan Old Style", Palatino, serif;
       font-size: clamp(2rem, 7vw, 3.4rem);
-      font-weight: 500; letter-spacing: -.03em; line-height: 1.05;
+      font-weight: 500;
+      letter-spacing: -.03em;
+      line-height: 1.05;
     }
     .copy p { margin: 14px 0 0; max-width: 28em; line-height: 1.55; color: var(--paper-2); }
-    .meta { margin-top: 18px !important; letter-spacing: .2em; text-transform: uppercase; font-size: 11px; color: var(--dust); }
-    .nav {
-      pointer-events: auto;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-top: 22px;
+    .meta {
+      margin-top: 18px !important;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--dust);
     }
-    .nav .arrow {
-      width: 44px; height: 44px; flex-shrink: 0;
-      border: 1px solid var(--line); border-radius: 999px;
-      background: rgb(22 17 14 / 0.4);
-    }
-    .nav .arrow[disabled] { opacity: .3; }
-    .dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-    .dots button {
-      width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px;
-      background: rgb(198 179 150 / 0.5);
-    }
-    .dots button[aria-current="true"] { width: 24px; background: var(--paper); }
     .hint {
-      margin: 12px 0 0; text-align: center;
-      letter-spacing: .28em; text-transform: uppercase; font-size: 11px; color: var(--dust);
+      position: absolute; left: 50%; bottom: 24px; z-index: 3;
+      transform: translateX(-50%);
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--dust);
     }
-    @media (prefers-reduced-motion: reduce) {
-      .layer { transition: none; }
-      .layer.on img.ken { animation: none; transform: none; }
+    nav {
+      display: none;
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%);
+      z-index: 4;
+      flex-direction: column;
+      max-height: 70vh;
     }
+    nav button {
+      min-height: 32px;
+      padding: 0 4px;
+      border: 0;
+      background: transparent;
+      text-align: right;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--dust);
+    }
+    nav button[aria-current="true"] { color: var(--paper); }
+    @media (min-width: 900px) { nav { display: flex; } header, .copy { padding-left: 32px; } }
   </style>
 </head>
 <body>
-  <div class="stage" id="stage">
+  <div id="spacer"></div>
+  <div class="stage">
     <div id="layers"></div>
     <div class="scrim"></div>
     <div class="vignette"></div>
     <header>
-      <p class="mark">SABLE.CO</p>
-      <a class="back" href="/want">Back to the collection</a>
+      <p class="mark">SABLE</p>
+      <a class="back" href="/want">Back to the shoes</a>
       <p class="kicker" id="kicker"></p>
       <p class="why" id="why"></p>
     </header>
-    <p class="count" id="count"></p>
+    <nav id="nav" aria-label="How an order works"></nav>
     <div class="copy">
       <h1 id="title"></h1>
       <p id="line"></p>
       <p class="meta" id="meta"></p>
-      <div class="nav">
-        <button class="arrow" type="button" id="prev" aria-label="Previous slide">‹</button>
-        <div class="dots" id="dots"></div>
-        <button class="arrow" type="button" id="next" aria-label="Next slide">›</button>
-      </div>
-      <p class="hint" id="hint">Swipe</p>
     </div>
+    <p class="hint" id="hint">Scroll</p>
   </div>
   <script>
     const LOOK = "https://raw.githubusercontent.com/lensleyluan001-create/sable-looks/main/film/";
     const CHAPTERS = [
-      { last: "The bench", why: "Order. Confirm. Send. The bench is the truth.", title: "A pair leaves like this.", line: "No cart. No card on the page. The floor, then the last, then the road.", meta: "SABLE.CO  ·  Handmade in our factory", still: LOOK + "house.jpg" },
-      { last: "The book", why: "The 45xxx is the stock number. The rand is listed.", title: "Pick the pair.", line: "Ninety-two pairs. The name is the type. You take the number. You do not guess.", meta: "Stock 45001–45092", still: LOOK + "book.jpg" },
-      { last: "The order", why: "No card. Name, UK size, WhatsApp.", title: "Send it.", line: "We log it on the floor. A checkout does not last a shoe.", meta: "WhatsApp  ·  No payment yet", still: LOOK + "order.jpg" },
-      { last: "The floor", why: "Not a website ticket. A bench list.", title: "On the floor.", line: "A salesperson writes the 45xxx. The floor is the book now.", meta: "Logged by hand", still: LOOK + "floor.jpg" },
-      { last: "Confirm", why: "If it is not on the bench, we say so.", title: "We look.", line: "The pair is there or it is not. We do not invent stock. Then we WhatsApp you. Then EFT.", meta: "Confirm, then you pay", still: LOOK + "confirm.jpg" },
-      { last: "Cut", why: "We cut in-house. Lead times come back to us.", title: "The hide.", line: "Vegetable tan. A knife. The shape of a last on the table.", meta: "Cut here", still: LOOK + "cut.jpg" },
-      { last: "Last", why: "The last is ours. So is the pair that leaves.", title: "Lasted here.", line: "Upper onto wood. The pair takes the shape we keep.", meta: "In-house", still: LOOK + "house.jpg" },
-      { last: "Stitch", why: "The stitch leaves with the pair.", title: "Waxed thread.", line: "Awl. Welt. The work you cannot sticker on.", meta: "Made on the bench", still: LOOK + "stitch.jpg" },
-      { last: "Laser", why: "Only the outside. We confirm the mark first.", title: "We burn the outside.", line: "Heel, quarter, or vamp. Initials, a name, or a logo. Laid on the bed, then the beam writes it into the grain. Permanent. Quoted.", meta: "Quoted  ·  Outside only", still: "https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-looks@a747321eb944fb1aab3fcfc0c522a2c0dd941f2e/film/laser.jpg", video: "https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-looks@a747321eb944fb1aab3fcfc0c522a2c0dd941f2e/film/laser.mp4" },
-      { last: "Finish", why: "Then the bench says yes.", title: "Ready.", line: "The pair is there. We tell you. Not before.", meta: "From the bench", still: LOOK + "derby.jpg" },
-      { last: "Pack", why: "Paper. The pair. Nothing louder.", title: "Wrapped.", line: "It leaves the bench the way it was lasted. Clean.", meta: "From the house", still: LOOK + "pack.jpg" },
-      { last: "Send", why: "Collect no fee. Local R100. International R300.", title: "Collect, or we send.", line: "Close? Come. Further? We send it. A manager can change the fee.", meta: "Collect  ·  Local  ·  Abroad", still: LOOK + "send.jpg" },
-      { last: "Tuesday", why: "You wear them. Not to a photoshoot.", title: "The point.", line: "A crease that knows the road. That is the order, finished.", meta: "Order. Confirm. Send.", still: LOOK + "vellie.jpg" }
+      { last: "The pair", why: "Tap the shoe you want. Photos swipe.", title: "Pick the pair you like.", line: "Vellies, golfers, chelseas, boots. The price on the card is the pair. Extras are extra — R50 each, written next to them.", meta: "Made in South Africa", still: LOOK + "book.jpg" },
+      { last: "Send", why: "Name and WhatsApp. We reply.", title: "Send it to us.", line: "Pick UK size (we show EU too) and hide. Add another pair if you want. Then send. We WhatsApp you on the number you gave.", meta: "Pay after we confirm", still: LOOK + "order.jpg" },
+      { last: "Confirm", why: "We check the bench. Then you pay.", title: "We confirm. Then EFT.", line: "If the pair is there, we send the listed rand. You pay. That is when the pair is yours — not before.", meta: "Confirm, then pay", still: LOOK + "confirm.jpg" },
+      { last: "Make", why: "Cut, stitch, finish here.", title: "We make it here.", line: "Once paid, most pairs leave in 10–14 working days. Handmade in our factory in South Africa.", meta: "10–14 working days after pay", still: LOOK + "cut.jpg" },
+      { last: "Laser", why: "Outside only. R50.", title: "A mark on the outside.", line: "Heel, quarter, or vamp. Initials, a name, or a logo. R50. Logo we confirm before we burn.", meta: "R50  ·  Outside only", still: LOOK + "laser.jpg" },
+      { last: "Leave", why: "Collect free. SA R100. Abroad R300.", title: "Collect, or we send.", line: "Close enough? Collect, no fee. In South Africa we send for R100. Abroad R300.", meta: "Collect  ·  SA R100  ·  Abroad R300", still: LOOK + "send.jpg" }
     ];
     const N = CHAPTERS.length;
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const CROSS = 0.16;
     const layersEl = document.getElementById("layers");
-    const dotsEl = document.getElementById("dots");
+    const nav = document.getElementById("nav");
+    const spacer = document.getElementById("spacer");
+    const hint = document.getElementById("hint");
     const layerEls = [];
-    let chapter = 0;
-    let startX = 0;
-    let dragging = false;
-
+    const ticks = [];
+    spacer.style.height = (N * 155) + "vh";
     CHAPTERS.forEach((ch, i) => {
       const layer = document.createElement("div");
-      layer.className = "layer" + (i === 0 ? " on" : "");
-      layer.innerHTML = '<img alt="" draggable="false" class="' + (i === 0 && !reduced ? "ken" : "") + '" src="' + ch.still + '">' +
-        (ch.video ? '<video muted playsinline loop preload="metadata" poster="' + ch.still + '" src="' + ch.video + '"></video>' : "");
+      layer.className = "layer";
+      layer.innerHTML = '<img alt="" src="' + ch.still + '">';
       layersEl.appendChild(layer);
       layerEls.push(layer);
-      const dot = document.createElement("button");
-      dot.type = "button";
-      dot.setAttribute("aria-label", ch.last);
-      dot.onclick = () => go(i);
-      dotsEl.appendChild(dot);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = ch.last.replace(/^The /, "");
+      btn.setAttribute("aria-label", ch.last);
+      btn.onclick = () => {
+        const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+        scrollTo({ top: (i / Math.max(1, N - 1)) * max + 8, behavior: "smooth" });
+      };
+      nav.appendChild(btn);
+      ticks.push(btn);
     });
-
     function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-    function pad(n) { return String(n).padStart(2, "0"); }
-    function go(next) {
-      chapter = clamp(next, 0, N - 1);
-      const ch = CHAPTERS[chapter];
+    function opacity(i, pos) {
+      if (i === N - 1 && pos >= N - 1) return 1;
+      if (i === 0 && pos <= 0) return 1;
+      const local = pos - i;
+      if (local <= -CROSS || local >= 1 + CROSS) return 0;
+      if (local < 0) return 1 + local / CROSS;
+      if (local > 1) return 1 - (local - 1) / CROSS;
+      if (local > 1 - CROSS) return 1 - (local - (1 - CROSS)) / CROSS;
+      return 1;
+    }
+    let chapter = 0;
+    function setCopy(i) {
+      const ch = CHAPTERS[i];
       document.getElementById("kicker").textContent = ch.last;
       document.getElementById("why").textContent = ch.why;
       document.getElementById("title").textContent = ch.title;
       document.getElementById("line").textContent = ch.line;
       document.getElementById("meta").textContent = ch.meta;
-      document.getElementById("count").textContent = pad(chapter + 1) + " / " + pad(N);
-      document.getElementById("hint").style.opacity = chapter === 0 ? "1" : "0";
-      document.getElementById("prev").disabled = chapter === 0;
-      document.getElementById("next").disabled = chapter === N - 1;
-      layerEls.forEach((el, i) => {
-        const on = i === chapter;
-        el.classList.toggle("on", on);
-        const img = el.querySelector("img");
-        img.classList.toggle("ken", on && !reduced);
-        const vid = el.querySelector("video");
-        if (vid) {
-          if (on && !reduced) vid.play().catch(function () {});
-          else { vid.pause(); vid.currentTime = 0; }
-        }
-      });
-      Array.from(dotsEl.children).forEach((b, i) => b.setAttribute("aria-current", i === chapter ? "true" : "false"));
+      ticks.forEach((b, n) => b.setAttribute("aria-current", n === i ? "true" : "false"));
     }
-    go(0);
-    document.getElementById("prev").onclick = () => go(chapter - 1);
-    document.getElementById("next").onclick = () => go(chapter + 1);
-    const stage = document.getElementById("stage");
-    stage.onpointerdown = function (e) {
-      dragging = true;
-      startX = e.clientX;
-      try { stage.setPointerCapture(e.pointerId); } catch (err) {}
-    };
-    stage.onpointerup = function (e) {
-      if (!dragging) return;
-      dragging = false;
-      const dx = e.clientX - startX;
-      if (dx < -56) go(chapter + 1);
-      else if (dx > 56) go(chapter - 1);
-    };
-    stage.onpointercancel = function () { dragging = false; };
-    addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); go(chapter + 1); }
-      if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); go(chapter - 1); }
-    });
+    setCopy(0);
+    let pos = 0;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function tick() {
+      const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      const target = clamp(scrollY / max, 0, 1);
+      pos += (target - pos) * (reduced ? 1 : 0.085);
+      const p = pos * Math.max(0, N - 1);
+      let best = 0, bestOp = -1;
+      layerEls.forEach((el, i) => {
+        const op = opacity(i, p);
+        el.style.opacity = String(op);
+        el.style.visibility = op < 0.02 ? "hidden" : "visible";
+        const img = el.querySelector("img");
+        const local = clamp(p - i, 0, 1);
+        if (img) img.style.transform = "scale(" + (1.08 - local * 0.08) + ")";
+        if (op > bestOp) { bestOp = op; best = i; }
+      });
+      if (best !== chapter) { chapter = best; setCopy(best); }
+      hint.style.opacity = String(clamp(1 - pos * 10, 0, 1));
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
   </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f1ebe1" />
+  <meta name="theme-color" content="#16110e" />
   <meta name="apple-mobile-web-app-capable" content="no" />
   <meta name="mobile-web-app-capable" content="no" />
   <title>SABLE — Collection 2026</title>
@@ -12,7 +12,7 @@
   <meta property="og:description" content="Tap a pair. Choose size. We WhatsApp you. Made in South Africa." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sable-floor.vercel.app/want" />
-  <meta property="og:image" content="https://raw.githubusercontent.com/lensleyluan001-create/sable-looks/main/views/45015-1.jpg" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/lensleyluan001-create/sable-looks/main/film/vellie.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -114,6 +114,124 @@
     body.on-grid.has-bag #dock { display: flex !important; }
     body.has-bag { padding-bottom: 0; }
     body.on-grid.has-bag { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+
+    header.mast {
+      position: relative;
+      isolation: isolate;
+      min-height: min(88dvh, 760px);
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #16110e;
+      color: #e8dfd0;
+    }
+    header.mast .mast-still {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 52% 42%;
+      max-width: none;
+    }
+    header.mast .mast-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgb(22 17 14 / 0.82) 0%, rgb(22 17 14 / 0.32) 42%, rgb(22 17 14 / 0.12) 72%);
+      pointer-events: none;
+    }
+    header.mast .mast-copy {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: min(88dvh, 760px);
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: calc(20px + env(safe-area-inset-top, 0px)) 16px 32px;
+    }
+    header.mast .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-right: 88px;
+    }
+    header.mast .brand { color: #c6b396; margin: 0; }
+    header.mast h1 { color: #f1ebe1; margin: 12px 0 12px; max-width: 12em; }
+    header.mast .place {
+      margin: 0 0 4px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: #c6b396;
+    }
+    header.mast .sub { color: #d7ccb8; max-width: 32em; }
+    header.mast .how p { color: #e8dfd0; }
+    header.mast .how span { border-color: #e8dfd0; }
+    header.mast .need-help {
+      margin: 0;
+      background: rgb(22 17 14 / 0.35);
+      color: #f1ebe1;
+      border: 1px solid rgb(241 235 225 / 0.25);
+      backdrop-filter: blur(8px);
+    }
+    header.mast .mast-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 16px;
+    }
+    header.mast .mast-cta a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    header.mast .mast-cta .on-paper {
+      background: #f1ebe1;
+      color: #16110e;
+    }
+    header.mast .mast-cta .ghost {
+      border: 1px solid rgb(241 235 225 / 0.35);
+      color: #f1ebe1;
+    }
+    @media (min-width: 720px) {
+      header.mast .mast-copy { padding: calc(28px + env(safe-area-inset-top, 0px)) 24px 40px; }
+    }
+
+    .tile { background: #f1ebe1; }
+    .tile img {
+      aspect-ratio: 4 / 5 !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      background: #f1ebe1 !important;
+      mix-blend-mode: multiply;
+    }
+    .hero .turn,
+    .turn,
+    .hero img,
+    .hero .turn img {
+      background: #f1ebe1 !important;
+    }
+    .hero .turn {
+      aspect-ratio: 4 / 5;
+    }
+    .hero .turn img,
+    .hero img {
+      object-fit: contain !important;
+      object-position: center !important;
+      mix-blend-mode: multiply;
+    }
+
     .golf-note {
       margin: -4px 0 12px;
       font-size: 13px;
@@ -153,23 +271,6 @@
     .golf-canvas { width: 100%; height: 100%; display: block; object-fit: cover; }
     .turn .stage canvas { width: 100%; height: 100%; display: block; object-fit: cover; }
 
-    .need-help {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      margin: 12px 0 8px;
-      padding: 0 16px;
-      border-radius: 999px;
-      background: #1c1814;
-      color: #f1ebe1;
-      text-decoration: none;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      font-size: 11px;
-      font-weight: 600;
-      font-family: Figtree, "Segoe UI", system-ui, sans-serif;
-    }
-    .need-help:focus-visible { outline: 2px solid #1c1814; outline-offset: 3px; }
     body.on-pair .need-help,
     body.on-order .need-help { display: none; }
 
@@ -239,24 +340,48 @@
     .hide-black { filter: brightness(.28) contrast(1.12); }
     .hide-olive { filter: hue-rotate(38deg) saturate(.78) brightness(.86); }
 
+    footer.shop-foot {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 8px 16px calc(40px + env(safe-area-inset-bottom, 0px));
+      color: #6f675e;
+      font-size: 13px;
+      line-height: 1.55;
+    }
   </style>
 </head>
 <body>
   <button class="go-back" type="button" id="back" hidden>Back</button>
   <a class="house-logo" href="/login" aria-label="SABLE login" title="Login">SABLE</a>
-  <header>
-    <div class="brand">SABLE</div>
-    <a class="need-help" href="/how">How an order works</a>
-    <h1>Leather shoes. Yours to pick.</h1>
-    <p class="sub">Tap a pair. Choose size. We WhatsApp you — then you pay once we confirm it. Most pairs leave 10–14 working days after EFT. Collect is free. Send in SA is R100.</p>
-    <div class="how" aria-label="How to order">
-      <p><span>1</span> Pick the pair</p>
-      <p><span>2</span> Add more if you want</p>
-      <p><span>3</span> Send. We WhatsApp you</p>
+  <header class="mast">
+    <img class="mast-still" src="https://raw.githubusercontent.com/lensleyluan001-create/sable-looks/main/film/vellie.jpg" alt="" />
+    <div class="mast-scrim"></div>
+    <div class="mast-copy">
+      <div class="brand-row">
+        <p class="brand">SABLE</p>
+        <a class="need-help" href="/how">How an order works</a>
+      </div>
+      <div>
+        <p class="place">Made in South Africa</p>
+        <h1>Leather shoes. Yours to pick.</h1>
+        <p class="sub">Tap a pair. Choose size. We WhatsApp you — then you pay once we confirm it. Most pairs leave 10–14 working days after EFT. Collect is free. Send in SA is R100.</p>
+        <div class="mast-cta">
+          <a class="on-paper" href="#grid">See the shoes</a>
+          <a class="ghost" href="/how">How an order works</a>
+        </div>
+        <div class="how" aria-label="How to order">
+          <p><span>1</span> Pick the pair</p>
+          <p><span>2</span> Add more if you want</p>
+          <p><span>3</span> Send. We WhatsApp you</p>
+        </div>
+      </div>
     </div>
   </header>
   <div class="chips type-row" id="types"></div>
   <div class="grid" id="grid"></div>
+  <footer class="shop-foot">
+    Made in our factory in South Africa. We confirm the pair on WhatsApp, then EFT. Collect is free. Send in SA is R100. Laser, laces and stitching are R50 each, on the outside only for laser.
+  </footer>
   <section class="ask" id="ask" hidden>
     <button class="back-inline" type="button" data-back>Back to collection</button>
     <article class="hero" id="hero"></article>
@@ -310,11 +435,11 @@
     </form>
   </section>
   <button class="bag-dock" type="button" id="dock" hidden></button>
-  <script src="./sentry.js?v=20260906sentry"></script>
+  <script src="./sentry.js?v=20260907fix"></script>
   <script>try{sableSentry("want")}catch(e){}</script>
   <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@8d2f07a69af3a7fb3999ace87765575e147c9d61/catalog.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@0abe4b1376e49a3e89b80777e615a3b0e0c8f71c/golf-tone.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@ded0636b11750ede39a996a67e3b01491cc1a6c1/want-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-floor-web@045ddca28c5cac365c7d85768d676bb8fc7e57c6/want-patch.js"></script>
+  <script src="./want-patch.js?v=20260907fix"></script>
 </body>
 </html>
