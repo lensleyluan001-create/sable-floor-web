@@ -414,5 +414,56 @@
     };
   }
 
+  const HOUSE_WA = "27826001950";
+  const waHref = "https://wa.me/" + HOUSE_WA;
+  const form = document.getElementById("want");
+  if (form && !document.getElementById("house-wa")) {
+    const p = document.createElement("p");
+    p.id = "house-wa";
+    p.className = "hint";
+    p.innerHTML = 'Or WhatsApp Sable: <a href="' + waHref + '">+27 82 600 1950</a>';
+    const submitBtn = form.querySelector("button[type=submit]");
+    if (submitBtn && submitBtn.parentNode) submitBtn.parentNode.insertBefore(p, submitBtn.nextSibling);
+    else form.appendChild(p);
+  }
+  const msgEl = document.getElementById("msg");
+  if (msgEl) {
+    const tweak = function () {
+      const t = String(msgEl.textContent || "");
+      if (/WhatsApp the house/.test(t) && msgEl.querySelector("a") == null) {
+        msgEl.innerHTML = 'Could not reach the desk. WhatsApp Sable: <a href="' + waHref + '">+27 82 600 1950</a>';
+      }
+    };
+    const obs = new MutationObserver(tweak);
+    obs.observe(msgEl, { childList: true, characterData: true, subtree: true });
+  }
+  const _fetch = window.fetch.bind(window);
+  window.fetch = function (url, opts) {
+    const req = _fetch(url, opts);
+    const path = String(url || "");
+    const method = String((opts && opts.method) || "GET").toUpperCase();
+    if (path.indexOf("/api/lead") >= 0 && method === "POST") {
+      return req.then(function (r) {
+        if (!r.ok) {
+          try {
+            const body = opts && opts.body ? JSON.parse(opts.body) : {};
+            const lines = (body.items || []).map(function (it) {
+              return [it.sku, it.look, it.size ? "UK " + it.size : "", it.colour || ""].filter(Boolean).join(" ");
+            }).join(" · ");
+            const text = ["SABLE order", body.name || "", body.phone || "", lines, body.note || ""].filter(Boolean).join("\n");
+            window.location.href = waHref + "?text=" + encodeURIComponent(text);
+          } catch (e) {
+            window.location.href = waHref;
+          }
+        }
+        return r;
+      }).catch(function (err) {
+        window.location.href = waHref;
+        throw err;
+      });
+    }
+    return req;
+  };
+
   if (typeof draw === "function") draw(false);
 })();
