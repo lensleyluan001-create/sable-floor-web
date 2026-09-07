@@ -279,9 +279,23 @@
         }
       }
       const hint = document.querySelector("#hero .hint");
-      if (hint && hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) {
-        hint.textContent = "Preview only — the photo is tinted. Final hide depends on the tannery.";
+      if (hint) {
+        if (hide && hide !== "book" && String(hide).indexOf("tt:") !== 0) {
+          hint.textContent = "Preview only — the photo is tinted. Final hide depends on the tannery.";
+        } else {
+          hint.textContent = "As photographed. Other hides tint the photo so you can see the idea.";
+        }
       }
+      document.querySelectorAll("#hero .hides .hide, #hero [data-whide]").forEach(function (b) {
+        const id = b.getAttribute("data-whide") || b.getAttribute("data-hide") || "";
+        if (!id || String(id).indexOf("tt:") === 0) return;
+        const lab = typeof hideName === "function" ? hideName(id) : id;
+        const sw = b.querySelector(".sw, .sw.duo, span");
+        const keep = sw ? sw.cloneNode(true) : null;
+        b.textContent = "";
+        if (keep) b.appendChild(keep);
+        b.appendChild(document.createTextNode(lab === "Book" ? "As photographed" : lab));
+      });
     };
   }
 
@@ -360,6 +374,45 @@
   if (more) more.textContent = "Add another pair";
   const submit = document.querySelector("#want button[type=submit]");
   if (submit) submit.textContent = "Send to Sable";
+
+  if (typeof hideChips === "function") {
+    const _hideChips = hideChips;
+    hideChips = function (on, attr) {
+      return _hideChips(on, attr, false);
+    };
+  }
+
+  if (typeof drawDels === "function") {
+    const _drawDels = drawDels;
+    drawDels = function () {
+      _drawDels();
+      const box = document.getElementById("dels");
+      if (!box) return;
+      const labels = { collect: "Collect · free", local: "Send in SA · R100", int: "Send abroad · R300" };
+      box.querySelectorAll("[data-del]").forEach(function (b) {
+        const id = b.getAttribute("data-del") || "";
+        if (labels[id]) b.textContent = labels[id];
+      });
+    };
+  }
+
+  const addEl = document.getElementById("add");
+  if (addEl) {
+    addEl.onclick = function () {
+      const it = packLine();
+      if (!it) return;
+      addLine(it);
+      thanks = "";
+      if (added) {
+        added.hidden = false;
+        added.textContent = bagCount() === 1
+          ? "On the order. Add another pair, or send when you are ready."
+          : "On the order · " + bagCount() + " pairs.";
+      }
+      screen = "pair";
+      draw(true);
+    };
+  }
 
   if (typeof draw === "function") draw(false);
 })();
