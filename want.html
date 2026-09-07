@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-desk-js@eb7878207d02c63741ff5ab28231b4ecc5c8230e/want.css" />
   <style>
     .house-logo {
@@ -38,7 +39,10 @@
       font-size: 11px;
       font-weight: 600;
       font-family: Fraunces, "Iowan Old Style", Palatino, serif;
+      gap: 8px;
     }
+    .house-logo .sable-mark { width: 18px; height: 18px; display: block; }
+    .sable-mark { width: 22px; height: 22px; display: block; flex: 0 0 auto; }
     .house-logo:focus-visible { outline: 2px solid #1c1814; outline-offset: 3px; }
     .go-back {
       position: fixed;
@@ -159,7 +163,13 @@
       gap: 12px;
       padding-right: 88px;
     }
-    header.mast .brand { color: #c6b396; margin: 0; }
+    header.mast .brand {
+      color: #c6b396;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
     header.mast h1 { color: #f1ebe1; margin: 12px 0 12px; max-width: 12em; }
     header.mast .place {
       margin: 0 0 4px;
@@ -352,13 +362,19 @@
 </head>
 <body>
   <button class="go-back" type="button" id="back" hidden>Back</button>
-  <a class="house-logo" href="/login" aria-label="SABLE login" title="Login">SABLE</a>
+  <a class="house-logo" href="/login" aria-label="SABLE login" title="Login">
+    <svg class="sable-mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square" d="M22 9c-7-2.2-12.4.6-12.4 4.1 0 3.5 5.4 4.3 12.2 6.7 4.6 1.6 3.8 6.2-3.8 7.3"/></svg>
+    SABLE
+  </a>
   <header class="mast">
     <img class="mast-still" src="https://raw.githubusercontent.com/lensleyluan001-create/sable-looks/main/film/vellie.jpg" alt="" />
     <div class="mast-scrim"></div>
     <div class="mast-copy">
       <div class="brand-row">
-        <p class="brand">SABLE</p>
+        <p class="brand">
+          <svg class="sable-mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square" d="M22 9c-7-2.2-12.4.6-12.4 4.1 0 3.5 5.4 4.3 12.2 6.7 4.6 1.6 3.8 6.2-3.8 7.3"/></svg>
+          SABLE
+        </p>
         <a class="need-help" href="/how">How an order works</a>
       </div>
       <div>

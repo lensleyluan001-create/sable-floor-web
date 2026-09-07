@@ -56,7 +56,11 @@
       letter-spacing: .32em;
       font-size: 11px;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
+    .mark svg { width: 22px; height: 22px; display: block; }
     .back {
       display: inline-flex;
       align-items: center;
@@ -147,7 +151,10 @@
     <div class="scrim"></div>
     <div class="vignette"></div>
     <header>
-      <p class="mark">SABLE</p>
+      <p class="mark">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square" d="M22 9c-7-2.2-12.4.6-12.4 4.1 0 3.5 5.4 4.3 12.2 6.7 4.6 1.6 3.8 6.2-3.8 7.3"/></svg>
+        SABLE
+      </p>
       <a class="back" href="/want">Back to the shoes</a>
       <p class="kicker" id="kicker"></p>
       <p class="why" id="why"></p>
