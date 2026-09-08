@@ -18,6 +18,7 @@ export function SableLockup({
   const { user, isPending } = useCurrentUserState();
   const color = tone === "paper" ? "text-paper" : "text-ink";
   const chip = tone === "paper" ? "bg-paper/15" : "bg-ink/10";
+  const showAccount = withAccount && !user?.isDevFallback;
 
   const mark = (
     <>
@@ -37,10 +38,10 @@ export function SableLockup({
           {mark}
         </Link>
       )}
-      {withAccount && isPending ? (
+      {showAccount && isPending ? (
         <span className={`hidden h-8 w-8 animate-pulse rounded-full sm:inline-block ${chip}`} />
       ) : null}
-      {withAccount && !isPending && user ? (
+      {showAccount && !isPending && user ? (
         <div className={`hidden max-w-[9rem] truncate sm:block ${color}`}>
           <UserButton />
         </div>
