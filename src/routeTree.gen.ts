@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as HowRouteImport } from './routes/how'
 import { Route as LastsRouteImport } from './routes/lasts'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as WantRouteImport } from './routes/want'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WantRoute = WantRouteImport.update({
+  id: '/want',
+  path: '/want',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/how': typeof HowRoute
   '/lasts': typeof LastsRoute
   '/login': typeof LoginRoute
+  '/want': typeof WantRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/how': typeof HowRoute
   '/lasts': typeof LastsRoute
   '/login': typeof LoginRoute
+  '/want': typeof WantRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,15 @@ export interface FileRoutesById {
   '/how': typeof HowRoute
   '/lasts': typeof LastsRoute
   '/login': typeof LoginRoute
+  '/want': typeof WantRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/how' | '/lasts' | '/login' | '/api/auth/$'
+  fullPaths: '/' | '/how' | '/lasts' | '/login' | '/want' | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/how' | '/lasts' | '/login' | '/api/auth/$'
-  id: '__root__' | '/' | '/how' | '/lasts' | '/login' | '/api/auth/$'
+  to: '/' | '/how' | '/lasts' | '/login' | '/want' | '/api/auth/$'
+  id: '__root__' | '/' | '/how' | '/lasts' | '/login' | '/want' | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +85,7 @@ export interface RootRouteChildren {
   HowRoute: typeof HowRoute
   LastsRoute: typeof LastsRoute
   LoginRoute: typeof LoginRoute
+  WantRoute: typeof WantRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -109,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/want': {
+      id: '/want'
+      path: '/want'
+      fullPath: '/want'
+      preLoaderRoute: typeof WantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -124,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowRoute: HowRoute,
   LastsRoute: LastsRoute,
   LoginRoute: LoginRoute,
+  WantRoute: WantRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

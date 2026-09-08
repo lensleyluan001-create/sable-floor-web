@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Chapter } from "@/lib/film";
+import { filmSrc } from "@/lib/film";
 import { LEAD_URL } from "@/lib/order";
 import { SableMark } from "@/components/sable-mark";
 
@@ -174,15 +175,15 @@ export function ScrollFilm({
             className="absolute inset-0"
             style={{ opacity: i === 0 ? 1 : 0 }}
           >
-            <img src={ch.still} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={filmSrc(ch.still)} alt="" className="absolute inset-0 h-full w-full object-cover" />
             {ch.video ? (
               <video
                 ref={(el) => {
                   videoRefs.current[i] = el;
                 }}
                 className="absolute inset-0 h-full w-full object-cover"
-                src={ch.video}
-                poster={ch.still}
+                src={filmSrc(ch.video)}
+                poster={filmSrc(ch.still)}
                 muted
                 playsInline
                 preload="metadata"

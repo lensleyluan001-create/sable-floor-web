@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent } from "rea
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Chapter } from "@/lib/film";
+import { filmSrc } from "@/lib/film";
 import { OrderSlip } from "@/components/scroll-film";
 import { SableMark } from "@/components/sable-mark";
 
@@ -120,7 +121,7 @@ export function CarouselFilm({
               aria-hidden={!on}
             >
               <img
-                src={ch.still}
+                src={filmSrc(ch.still)}
                 alt=""
                 draggable={false}
                 className={`absolute inset-0 h-full w-full object-cover ${on && !reduced.current ? "carousel-ken" : ""}`}
@@ -128,8 +129,8 @@ export function CarouselFilm({
               {nearby && on && ch.video ? (
                 <video
                   className="absolute inset-0 h-full w-full object-cover"
-                  src={ch.video}
-                  poster={ch.still}
+                  src={filmSrc(ch.video)}
+                  poster={filmSrc(ch.still)}
                   muted
                   playsInline
                   loop

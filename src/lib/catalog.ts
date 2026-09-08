@@ -1,3 +1,5 @@
+import { filmSrc } from "./film";
+
 export type Pair = {
   n: number;
   sku: string;
@@ -293,17 +295,18 @@ export function sizeLabel(look: string, uk: string): string {
 
 export function lookStill(look: string): string {
   const name = look.toLowerCase();
-  if (name.startsWith("kids")) return "/film/kids.jpg";
-  if (name.includes("wool")) return "/film/wool.jpg";
-  if (name.includes("hiking")) return "/film/hiking.jpg";
-  if (name.includes("combat")) return "/film/combat.jpg";
-  if (name.includes("zip")) return "/film/zip.jpg";
-  if (name.includes("golfer")) return "/film/golfer.jpg";
-  if (name.includes("chelsea")) return "/film/chelsea.jpg";
-  if (name.includes("derby")) return "/film/derby.jpg";
-  if (name.includes("loafer")) return "/film/loafer.jpg";
-  if (name.includes("sandal") || name.includes("thong")) return "/film/sandal.jpg";
-  return "/film/vellie.jpg";
+  let path = "/film/vellie.jpg";
+  if (name.startsWith("kids")) path = "/film/kids.jpg";
+  else if (name.includes("wool")) path = "/film/wool.jpg";
+  else if (name.includes("hiking")) path = "/film/hiking.jpg";
+  else if (name.includes("combat")) path = "/film/combat.jpg";
+  else if (name.includes("zip")) path = "/film/zip.jpg";
+  else if (name.includes("golfer")) path = "/film/golfer.jpg";
+  else if (name.includes("chelsea")) path = "/film/chelsea.jpg";
+  else if (name.includes("derby")) path = "/film/derby.jpg";
+  else if (name.includes("loafer")) path = "/film/loafer.jpg";
+  else if (name.includes("sandal") || name.includes("thong")) path = "/film/sandal.jpg";
+  return filmSrc(path);
 }
 
 export function pairPhotos(pair: Pair): { src: string; alt: string; kind: "pair" | "last" }[] {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { displayLook } from "@/lib/catalog";
-import { themeForLook } from "@/lib/film";
+import { filmSrc, themeForLook } from "@/lib/film";
 
 const HOLD_MS = 8000;
 
@@ -80,7 +80,7 @@ export function LastFilm({ look, count }: { look: string; count: number }) {
         }}
       >
         <img
-          src={current.still}
+          src={filmSrc(current.still)}
           alt=""
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: fit }}
@@ -93,8 +93,8 @@ export function LastFilm({ look, count }: { look: string; count: number }) {
             ref={videoRef}
             className="pointer-events-none absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: fit }}
-            src={current.video}
-            poster={current.still}
+            src={filmSrc(current.video)}
+            poster={filmSrc(current.still)}
             muted
             loop
             playsInline

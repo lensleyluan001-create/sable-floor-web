@@ -8,7 +8,7 @@ import { PairStrip } from "@/components/photo-carousel";
 import { ProcessFilm } from "@/components/process-film";
 import { LastFilm } from "@/components/last-film";
 import { SableLockup } from "@/components/sable-lockup";
-import { ORDER_LASTS, themeForLook } from "@/lib/film";
+import { ORDER_LASTS, filmSrc, themeForLook } from "@/lib/film";
 import { PROCESS_CHAPTERS } from "@/lib/process";
 
 export function Collection() {
@@ -63,14 +63,14 @@ export function Collection() {
 
       <header className="relative isolate min-h-[min(88dvh,760px)] overflow-hidden bg-ink text-paper">
         <img
-          src="/film/vellie.jpg"
+          src={filmSrc("/film/vellie.jpg")}
           alt=""
           className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[52%_42%]"
         />
         <video
           className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[52%_42%]"
-          src="/film/vellie.mp4"
-          poster="/film/vellie.jpg"
+          src={filmSrc("/film/vellie.mp4")}
+          poster={filmSrc("/film/vellie.jpg")}
           autoPlay
           muted
           loop

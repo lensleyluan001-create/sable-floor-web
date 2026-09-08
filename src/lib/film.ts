@@ -1,3 +1,13 @@
+const FILM_CDN =
+  "https://cdn.jsdelivr.net/gh/lensleyluan001-create/sable-floor-web@59a8963/public";
+
+/** Local /film in preview; GitHub CDN on the live Vercel shop. */
+export function filmSrc(path: string): string {
+  if (!path.startsWith("/film/")) return path;
+  if (import.meta.env.DEV) return path;
+  return FILM_CDN + path;
+}
+
 export type LastId =
   | "house"
   | "vellie"
