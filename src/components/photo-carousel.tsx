@@ -162,26 +162,14 @@ export function PairStrip({
   onOpen: (pair: Pair) => void;
   large?: boolean;
 }) {
-  const drag = useDragScroll();
-
   return (
     <div className="relative min-w-0">
-      <div
-        ref={drag.ref}
-        className="snap-row"
-        onPointerDown={drag.onPointerDown}
-        onPointerMove={drag.onPointerMove}
-        onPointerUp={drag.onPointerUp}
-        onPointerCancel={drag.onPointerUp}
-      >
+      <div className="snap-row">
         {pairs.map((pair) => (
           <button
             key={pair.sku}
             type="button"
-            onClick={() => {
-              if (drag.didMove()) return;
-              onOpen(pair);
-            }}
+            onClick={() => onOpen(pair)}
             className={`snap-card overflow-hidden rounded-[18px] bg-card text-left shadow-[0_0_0_1px_rgb(28_24_20/0.08),0_12px_28px_rgb(28_24_20/0.07)] transition-transform duration-150 ease-out active:scale-[0.98] ${
               large ? "snap-card-lg" : ""
             }`}
