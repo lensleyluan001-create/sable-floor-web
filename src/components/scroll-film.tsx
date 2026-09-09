@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import type { Chapter } from "@/lib/film";
 import { filmSrc } from "@/lib/film";
+import { staffLoginHref } from "@/lib/floor";
 import { LEAD_URL } from "@/lib/order";
 import { SableMark } from "@/components/sable-mark";
 
@@ -199,10 +199,10 @@ export function ScrollFilm({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="flex items-center gap-2 font-sans text-[11px] font-medium tracking-[0.32em] text-paper">
-                <Link to="/login" className="pointer-events-auto flex min-h-11 items-center gap-2" aria-label="SABLE — log in">
+                <a href={staffLoginHref()} className="pointer-events-auto flex min-h-11 items-center gap-2" aria-label="SABLE — staff desk">
                   <SableMark className="h-7 w-7" />
                   SABLE
-                </Link>
+                </a>
               </p>
               {onBack ? (
                 <button

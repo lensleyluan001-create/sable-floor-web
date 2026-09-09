@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { SableMark } from "@/components/sable-mark";
-
-export const FLOOR_LOGIN = "https://sable-floor.vercel.app/login";
+import { FLOOR_LOGIN } from "@/lib/floor";
 
 export const Route = createFileRoute("/login")({
   component: Login,

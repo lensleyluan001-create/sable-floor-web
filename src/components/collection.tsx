@@ -11,8 +11,7 @@ import { SableLockup } from "@/components/sable-lockup";
 import { ProofDrop } from "@/components/proof-drop";
 import { ORDER_LASTS, filmSrc, themeForLook } from "@/lib/film";
 import { PROCESS_CHAPTERS } from "@/lib/process";
-
-const STAFF_HREF = import.meta.env.PROD ? "https://sable-floor.vercel.app/login" : "/login";
+import { staffLoginHref } from "@/lib/floor";
 
 export function Collection() {
   const [filter, setFilter] = useState("All");
@@ -99,13 +98,21 @@ export function Collection() {
         <div className="relative z-10 mx-auto flex min-h-[min(88dvh,760px)] max-w-[1080px] flex-col justify-between px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-8 sm:px-6 sm:pb-10">
           <div className="flex items-center justify-between gap-3">
             <SableLockup tone="paper" />
-            <button
-              type="button"
-              onClick={() => setHelp(true)}
-              className="inline-flex min-h-11 items-center rounded-full border border-paper/25 bg-ink/35 px-3.5 font-sans text-[11px] font-medium tracking-[0.14em] text-paper uppercase backdrop-blur-sm"
-            >
-              How an order works
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <a
+                href={staffLoginHref()}
+                className="inline-flex min-h-11 items-center rounded-full border border-paper/25 bg-ink/35 px-3.5 font-sans text-[11px] font-medium tracking-[0.14em] text-paper uppercase backdrop-blur-sm"
+              >
+                Floor
+              </a>
+              <button
+                type="button"
+                onClick={() => setHelp(true)}
+                className="inline-flex min-h-11 items-center rounded-full border border-paper/25 bg-ink/35 px-3.5 font-sans text-[11px] font-medium tracking-[0.14em] text-paper uppercase backdrop-blur-sm"
+              >
+                How an order works
+              </button>
+            </div>
           </div>
           <div className="max-w-[24rem] sm:max-w-[30rem]">
             <p className="font-sans text-[11px] tracking-[0.28em] text-dust uppercase">Made in South Africa</p>
@@ -197,14 +204,18 @@ export function Collection() {
         })}
       </div>
 
-      <footer className="mx-auto max-w-[1080px] px-4 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-6">
+      <footer
+        className={`mx-auto max-w-[1080px] px-4 sm:px-6 ${
+          lines.length ? "pb-[max(7rem,env(safe-area-inset-bottom))]" : "pb-[max(2rem,env(safe-area-inset-bottom))]"
+        }`}
+      >
         <p className="max-w-[36em] font-sans text-[13px] leading-relaxed text-muted">
           Made in our factory in South Africa. We confirm the pair on WhatsApp, then EFT. Collect is free. Send in SA is
           R100. Each extra is R50. The photo is the last — hide and stitch are written on the order. We confirm before we
           cut.
         </p>
         <p className="mt-4 font-sans text-[12px] tracking-[0.12em] text-muted uppercase">
-          <a href={STAFF_HREF} className="underline-offset-4 hover:underline">
+          <a href={staffLoginHref()} className="underline-offset-4 hover:underline">
             Staff desk
           </a>
         </p>
