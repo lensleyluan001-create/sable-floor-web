@@ -11,6 +11,8 @@ import { SableLockup } from "@/components/sable-lockup";
 import { ORDER_LASTS, filmSrc, themeForLook } from "@/lib/film";
 import { PROCESS_CHAPTERS } from "@/lib/process";
 
+const STAFF_HREF = import.meta.env.PROD ? "https://sable-floor.vercel.app/login" : "/login";
+
 export function Collection() {
   const [filter, setFilter] = useState("All");
   const [open, setOpen] = useState<Pair | null>(null);
@@ -19,6 +21,8 @@ export function Collection() {
   const [clerk, setClerk] = useState<{ pair?: Pair; draft?: SpecDraft; locked: boolean } | null>(null);
   const lines = useOrder((s) => s.lines);
   const delivery = useOrder((s) => s.delivery);
+  const justAdded = useOrder((s) => s.justAdded);
+  const clearJustAdded = useOrder((s) => s.clearJustAdded);
 
   const groups = useMemo(() => {
     const shop = SHOP_FILTERS.find((f) => f.id === filter);
@@ -40,6 +44,12 @@ export function Collection() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [help]);
+
+  useEffect(() => {
+    if (!justAdded) return;
+    const t = window.setTimeout(() => clearJustAdded(), 4000);
+    return () => window.clearTimeout(t);
+  }, [justAdded, clearJustAdded]);
 
   if (help) {
     return (
@@ -81,22 +91,13 @@ export function Collection() {
         <div className="relative z-10 mx-auto flex min-h-[min(88dvh,760px)] max-w-[1080px] flex-col justify-between px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-8 sm:px-6 sm:pb-10">
           <div className="flex items-center justify-between gap-3">
             <SableLockup tone="paper" />
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setClerk({ locked: false })}
-                className="inline-flex min-h-11 items-center rounded-full border border-paper/25 bg-ink/35 px-3.5 font-sans text-[11px] font-medium tracking-[0.14em] text-paper uppercase backdrop-blur-sm"
-              >
-                Your spec
-              </button>
-              <button
-                type="button"
-                onClick={() => setHelp(true)}
-                className="inline-flex min-h-11 items-center rounded-full border border-paper/25 bg-ink/35 px-3.5 font-sans text-[11px] font-medium tracking-[0.14em] text-paper uppercase backdrop-blur-sm"
-              >
-                How an order works
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setHelp(true)}
+              className="inline-flex min-h-11 items-center rounded-full border border-paper/25 bg-ink/35 px-3.5 font-sans text-[11px] font-medium tracking-[0.14em] text-paper uppercase backdrop-blur-sm"
+            >
+              How an order works
+            </button>
           </div>
           <div className="max-w-[24rem] sm:max-w-[30rem]">
             <p className="font-sans text-[11px] tracking-[0.28em] text-dust uppercase">Made in South Africa</p>
@@ -104,7 +105,8 @@ export function Collection() {
               Leather shoes. Yours to pick.
             </h1>
             <p className="mt-4 max-w-[28em] font-sans text-[15px] leading-relaxed text-paper-2">
-              Tap a pair. Hide, stitch, laces, a laser — as you want them. The last stays. We WhatsApp you, then you pay once we confirm it. Most pairs leave 10–14 working days after EFT.
+              Tap the pair on the film, or another last below. Hide and stitch go on the ticket — the photo stays this
+              last. We WhatsApp you, then you pay once we confirm it.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <button
@@ -112,14 +114,7 @@ export function Collection() {
                 onClick={() => setOpen(FEATURED)}
                 className="inline-flex min-h-11 items-center rounded-full bg-paper px-5 font-sans text-[11px] font-semibold tracking-[0.16em] text-ink uppercase"
               >
-                Open the chelsea
-              </button>
-              <button
-                type="button"
-                onClick={() => setClerk({ locked: false })}
-                className="inline-flex min-h-11 items-center rounded-full border border-paper/35 px-5 font-sans text-[11px] font-semibold tracking-[0.16em] text-paper uppercase"
-              >
-                Your spec
+                Open this vellie
               </button>
               <a
                 href="#grid"
@@ -158,77 +153,67 @@ export function Collection() {
           const prevId = i > 0 ? themeForLook(groups[i - 1][0]).id : null;
           const showFilm = themeId !== prevId;
           return (
-          <section key={name} className="mb-10">
-            {showFilm ? (
-              <LastFilm look={name} count={pairs.length} />
-            ) : (
-              <div className="mx-4 mb-3 flex items-end justify-between gap-3 sm:mx-6">
-                <h2 className="font-display text-[1.45rem] font-medium tracking-[-0.02em] text-ink sm:text-[1.9rem]">
-                  {displayLook(name)}
-                </h2>
-                <p className="font-sans text-[11px] tracking-[0.16em] text-muted uppercase">
-                  {pairs.length} {pairs.length === 1 ? "pair" : "pairs"}
-                </p>
+            <section key={name} className="mb-10">
+              {showFilm ? (
+                <LastFilm look={name} count={pairs.length} />
+              ) : (
+                <div className="mx-4 mb-3 flex items-end justify-between gap-3 sm:mx-6">
+                  <h2 className="font-display text-[1.45rem] font-medium tracking-[-0.02em] text-ink sm:text-[1.9rem]">
+                    {displayLook(name)}
+                  </h2>
+                  <p className="font-sans text-[11px] tracking-[0.16em] text-muted uppercase">
+                    {pairs.length} {pairs.length === 1 ? "pair" : "pairs"}
+                  </p>
+                </div>
+              )}
+              <div className={showFilm ? "mt-3" : undefined}>
+                <PairStrip pairs={pairs} onOpen={setOpen} large={groups.length === 1} />
               </div>
-            )}
-            <div className={showFilm ? "mt-3" : undefined}>
-              <PairStrip pairs={pairs} onOpen={setOpen} large={groups.length === 1} />
-            </div>
-            {filter === "All" && i === 0 ? (
-              <button
-                type="button"
-                onClick={() => setClerk({ locked: false })}
-                className="mx-4 mt-5 flex w-[calc(100%-2rem)] items-center justify-between gap-4 overflow-hidden rounded-lg bg-ink px-4 py-4 text-left sm:mx-6 sm:w-[calc(100%-3rem)] sm:px-5"
-              >
-                <span>
-                  <span className="block font-sans text-[11px] tracking-[0.2em] text-dust uppercase">Your spec</span>
-                  <span className="font-display mt-1 block text-xl tracking-[-0.02em] text-paper">
-                    Grey hide. Aqua stitch. This last.
+              {filter === "All" && i === 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setClerk({ locked: false })}
+                  className="mx-4 mt-5 flex w-[calc(100%-2rem)] items-center justify-between gap-4 overflow-hidden rounded-lg bg-ink px-4 py-4 text-left sm:mx-6 sm:w-[calc(100%-3rem)] sm:px-5"
+                >
+                  <span>
+                    <span className="block font-sans text-[11px] tracking-[0.2em] text-dust uppercase">Your spec</span>
+                    <span className="font-display mt-1 block text-xl tracking-[-0.02em] text-paper">
+                      Grey hide. Aqua stitch. This last.
+                    </span>
                   </span>
-                </span>
-                <span className="shrink-0 font-sans text-[11px] tracking-[0.14em] text-paper uppercase">Tell us</span>
-              </button>
-            ) : null}
-            {filter === "All" && i === 1 ? (
-              <button
-                type="button"
-                onClick={() => setHelp(true)}
-                className="mx-4 mt-5 flex w-[calc(100%-2rem)] items-center justify-between gap-4 overflow-hidden rounded-lg bg-ink px-4 py-4 text-left sm:mx-6 sm:w-[calc(100%-3rem)] sm:px-5"
-              >
-                <span>
-                  <span className="block font-sans text-[11px] tracking-[0.2em] text-dust uppercase">How long?</span>
-                  <span className="font-display mt-1 block text-xl tracking-[-0.02em] text-paper">
-                    10–14 working days after you pay
-                  </span>
-                </span>
-                <span className="shrink-0 font-sans text-[11px] tracking-[0.14em] text-paper uppercase">See how</span>
-              </button>
-            ) : null}
-          </section>
+                  <span className="shrink-0 font-sans text-[11px] tracking-[0.14em] text-paper uppercase">Tell us</span>
+                </button>
+              ) : null}
+            </section>
           );
         })}
       </div>
 
       <footer className="mx-auto max-w-[1080px] px-4 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-6">
         <p className="max-w-[36em] font-sans text-[13px] leading-relaxed text-muted">
-          Made in our factory in South Africa. We confirm the pair on WhatsApp, then EFT. Collect is free. Send in SA
-          is R100. Laces, stitch, elastic, sole, lining, hardware and laser are R50 each. A spec that is hard to chip?
-          Open Your spec — grey hide, aqua stitch, the lot. We keep this last. We confirm before we cut.
+          Made in our factory in South Africa. We confirm the pair on WhatsApp, then EFT. Collect is free. Send in SA is
+          R100. Each extra is R50. The photo is the last — hide and stitch are written on the order. We confirm before we
+          cut.
+        </p>
+        <p className="mt-4 font-sans text-[12px] tracking-[0.12em] text-muted uppercase">
+          <a href={STAFF_HREF} className="underline-offset-4 hover:underline">
+            Staff desk
+          </a>
         </p>
       </footer>
 
       {lines.length > 0 && !open && !review && !clerk ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-rule bg-card/95 px-4 py-3 backdrop-blur-sm sm:px-6">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink bg-ink px-4 py-3 text-paper sm:px-6">
           <div className="mx-auto flex max-w-[1080px] items-center justify-between gap-3 pb-[env(safe-area-inset-bottom)]">
-            <p className="font-sans text-sm text-ink">
-              {lines.length} {lines.length === 1 ? "pair" : "pairs"}
-              <span className="text-muted"> · </span>
+            <p className="font-sans text-sm text-paper">
+              {justAdded ? `Added ${justAdded}` : `${lines.length} ${lines.length === 1 ? "pair" : "pairs"}`}
+              <span className="text-dust"> · </span>
               <span className="font-display">R{orderTotal(lines, delivery)}</span>
             </p>
             <button
               type="button"
               onClick={() => setReview(true)}
-              className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 font-sans text-[11px] font-semibold tracking-[0.14em] text-bone uppercase transition-transform duration-150 active:scale-[0.96]"
+              className="inline-flex min-h-11 items-center rounded-full bg-paper px-4 font-sans text-[11px] font-semibold tracking-[0.14em] text-ink uppercase transition-transform duration-150 active:scale-[0.96]"
             >
               Review order
             </button>

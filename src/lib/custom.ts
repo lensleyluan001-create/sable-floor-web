@@ -555,6 +555,7 @@ export function applyClerkPatch(draft: SpecDraft, patch: ClerkPatch, look: strin
 
 export function specCaption(draft: SpecDraft): string {
   const bits: string[] = [];
+  if (draft.size) bits.push(`UK ${draft.size}`);
   if (draft.hide && draft.hide !== "As photographed") bits.push(`${draft.hide} hide`);
   if (draft.extras.includes("stitch")) bits.push(`${stitchLabelOf(draft.stitchId)} stitch`);
   if (draft.extras.includes("laces")) bits.push(`${laceLabelOf(draft.laceId)} laces`);
@@ -566,7 +567,10 @@ export function specCaption(draft: SpecDraft): string {
     const where = draft.laserPlace.toLowerCase();
     bits.push(draft.laserText ? `laser "${draft.laserText}" ${where}` : `laser ${where}`);
   }
-  return bits.length ? bits.join(" · ") : "As photographed";
+  if (!bits.length) return "As photographed";
+  const named = bits.filter((b) => !b.startsWith("UK "));
+  if (!named.length) return `${bits[0]} selected`;
+  return `${bits.join(" · ")} — photo stays this pair`;
 }
 
 export function orderSpecLine(draft: SpecDraft): string {

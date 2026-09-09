@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { extraPrice, GOLF_TONES, isTwoToneSku, pairTitle, type Pair } from "@/lib/catalog";
+import { extraPrice, GOLF_TONES, isTwoToneSku, pairTitle, sizeLabel, type Pair } from "@/lib/catalog";
 import {
   applyClerkPatch,
   emptyDraft,
@@ -12,10 +12,10 @@ import {
 } from "@/lib/custom";
 import {
   DELIVERY,
-  orderMessage,
   orderTotal,
   submitOrder,
   useOrder,
+  whatsappOrderUrl,
   type OrderLine,
 } from "@/lib/order";
 import { Field, SheetFrame } from "@/components/sheet-frame";
@@ -54,37 +54,58 @@ export function PairSheet({
     });
   };
 
+  const addPair = () => {
+    add(pair, draft.size, hideLabel, orderExtrasPayload(draft), orderSpecLine(draft));
+    onAdded();
+  };
+
   return (
-    <SheetFrame onClose={onClose} labelledBy="pair-title">
-      <ShoeStage pair={pair} draft={draft} caption={specCaption(draft)} />
+    <SheetFrame
+      onClose={onClose}
+      labelledBy="pair-title"
+      footer={
+        <div className="flex flex-col gap-1">
+          <button
+            type="button"
+            onClick={addPair}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-ink px-4 font-sans text-[12px] font-semibold tracking-[0.16em] text-bone uppercase transition-transform duration-150 ease-out active:scale-[0.96]"
+          >
+            Add UK {draft.size} · {pairTitle(pair)} · R{due}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-h-11 w-full font-sans text-[12px] tracking-[0.16em] text-muted uppercase"
+          >
+            Keep looking
+          </button>
+        </div>
+      }
+    >
+      <ShoeStage pair={pair} draft={draft} compact caption={specCaption(draft)} />
       {pair.views.length > 1 ? (
         <p className="mt-2 text-center font-sans text-[11px] tracking-[0.2em] text-muted uppercase">
           {pair.views.length} photos · swipe
         </p>
       ) : null}
-      <p className="mt-4 font-sans text-[11px] font-medium tracking-[0.28em] text-muted">No. {pair.sku}</p>
+      <p className="mt-4 font-sans text-[11px] font-medium tracking-[0.28em] text-muted">This last</p>
       <div className="mt-1 flex items-baseline justify-between gap-3">
         <h2 id="pair-title" className="font-display text-[1.85rem] leading-none font-medium tracking-[-0.03em] text-ink">
           {pairTitle(pair)}
         </h2>
         <p className="font-display text-xl tracking-[-0.02em] text-ink">R{due}</p>
       </div>
-      {due !== pair.price ? (
-        <p className="mt-1 font-sans text-[13px] text-muted">
-          Pair R{pair.price} · extras R{due - pair.price}
-        </p>
-      ) : (
-        <p className="mt-1 font-sans text-sm text-muted">
-          {twoTone ? "Two-tone. Body and vamp — pick a colour." : "As photographed. Other hides are a preview."}
-        </p>
-      )}
+      <p className="mt-1 font-sans text-sm text-muted">
+        {sizeLabel(pair.look, draft.size)} selected.
+        {due !== pair.price ? ` Pair R${pair.price} · extras R${due - pair.price}.` : ""} The photo is this pair.
+      </p>
 
       <SpecControls pair={pair} draft={draft} onChange={setDraft} guide={guide} onGuide={() => setGuide((v) => !v)} />
 
       <div className="mt-5 rounded-md border border-rule bg-bone px-3.5 py-3.5">
         <p className="font-sans text-[11px] tracking-[0.16em] text-muted uppercase">Your spec</p>
         <p className="mt-1.5 font-sans text-[13px] leading-relaxed text-muted">
-          This last. Hide, stitch, laces, sole, laser — as you want them. The photo stays this pair.
+          Hide, stitch, laces, sole, laser — written on the order. We do not redraw the last.
         </p>
         <textarea
           value={draft.note}
@@ -106,24 +127,6 @@ export function PairSheet({
           </button>
         ) : null}
       </div>
-
-      <button
-        type="button"
-        onClick={() => {
-          add(pair, draft.size, hideLabel, orderExtrasPayload(draft), orderSpecLine(draft));
-          onAdded();
-        }}
-        className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-ink px-4 font-sans text-[12px] font-semibold tracking-[0.16em] text-bone uppercase transition-transform duration-150 ease-out active:scale-[0.96]"
-      >
-        Add {pairTitle(pair)} · R{due}
-      </button>
-      <button
-        type="button"
-        onClick={onClose}
-        className="mt-2 min-h-11 w-full font-sans text-[12px] tracking-[0.16em] text-muted uppercase"
-      >
-        Keep looking
-      </button>
     </SheetFrame>
   );
 }
@@ -141,7 +144,7 @@ export function ReviewSheet({ onClose }: { onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
-  const message = orderMessage(lines, name, phone, delivery);
+  const [wa, setWa] = useState("");
   const ready = name.trim().length > 1 && phone.replace(/\D/g, "").length >= 9 && lines.length > 0;
 
   const send = async () => {
@@ -153,9 +156,8 @@ export function ReviewSheet({ onClose }: { onClose: () => void }) {
       setSent(true);
       clear();
     } catch {
-      const wa = `https://wa.me/27826001950?text=${encodeURIComponent(message)}`;
-      window.location.href = wa;
-      setError("Could not send on the site. Opening WhatsApp to Sable.");
+      setWa(whatsappOrderUrl(lines, name, phone, delivery));
+      setError("The floor did not pick this up. Keep this order here, or WhatsApp it to Sable.");
     } finally {
       setBusy(false);
     }
@@ -169,7 +171,7 @@ export function ReviewSheet({ onClose }: { onClose: () => void }) {
           We have the order.
         </h2>
         <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
-          Sable will WhatsApp you on {phone} to confirm the pair, then the listed rand. Most pairs leave 10–14 working
+          Sable will WhatsApp you on {phone} to confirm each pair, then the listed rand. Most pairs leave 10–14 working
           days after you pay.
         </p>
         <button
@@ -252,14 +254,24 @@ export function ReviewSheet({ onClose }: { onClose: () => void }) {
       <button
         type="button"
         disabled={!ready || busy}
-        onClick={send}
+        onClick={() => void send()}
         className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-ink px-4 font-sans text-[12px] font-semibold tracking-[0.16em] text-bone uppercase disabled:opacity-40"
       >
         {busy ? "Sending…" : "Send to Sable"}
       </button>
       <p className="mt-2 text-center font-sans text-[12px] text-muted">
-        Goes to the floor. We WhatsApp you — not a blank chat.
+        Goes to the floor. We WhatsApp you after — you stay on this page.
       </p>
+      {wa ? (
+        <a
+          href={wa}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-ink px-4 font-sans text-[12px] tracking-[0.14em] text-ink uppercase"
+        >
+          WhatsApp this order
+        </a>
+      ) : null}
       <button
         type="button"
         onClick={onClose}
@@ -277,7 +289,7 @@ function ReviewLine({ line, onRemove }: { line: OrderLine; onRemove: () => void 
       <div>
         <p className="font-display text-lg tracking-[-0.02em] text-ink">{line.title}</p>
         <p className="font-sans text-[13px] text-muted">
-          No. {line.sku} · UK {line.size} · {line.hide}
+          UK {line.size} · {line.hide}
           {line.spec ? ` · ${line.spec}` : ""}
         </p>
       </div>

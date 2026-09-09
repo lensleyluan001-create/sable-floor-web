@@ -76,7 +76,11 @@ export function SpecControls({
             Sizes are UK. EU is next to each one. If you sit between, take the larger. Unsure? Put it in the note — we will
             check.
           </p>
-        ) : null}
+        ) : (
+          <p className="mt-2 font-sans text-[13px] leading-relaxed text-muted">
+            {sizeLabel(pair.look, draft.size)} is selected. Change it if that is not your size.
+          </p>
+        )}
       </div>
 
       <div className="mt-5">
@@ -116,7 +120,7 @@ export function SpecControls({
           </p>
         ) : !twoTone && draft.hide !== "As photographed" ? (
           <p className="mt-2 font-sans text-[13px] leading-relaxed text-muted">
-            Preview only — the photo is tinted so you can see the idea. Final hide depends on what the tannery sends.
+            The photo stays this pair. We cut the hide you name, then confirm before we last it.
           </p>
         ) : null}
       </div>

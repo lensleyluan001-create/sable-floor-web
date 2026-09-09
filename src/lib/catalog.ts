@@ -129,7 +129,7 @@ export const PAIRS: Pair[] = RAW.map(([n, look, price]) => {
   };
 });
 
-export const FEATURED = PAIRS.find((p) => p.n === 15) ?? PAIRS[0];
+export const FEATURED = PAIRS.find((p) => p.n === 1) ?? PAIRS[0];
 
 export type ShopFilter = { id: string; looks: string[] | null };
 
@@ -152,7 +152,7 @@ export function displayLook(look: string): string {
 }
 
 export function pairTitle(pair: Pair): string {
-  return displayLook(pair.look);
+  return `${displayLook(pair.look)} ${pair.sku}`;
 }
 
 export const HIDES = [
@@ -263,6 +263,8 @@ export const UK_EU: Record<string, string> = {
   "11": "46",
   "12": "47",
   "13": "48.5",
+  "14": "50",
+  "15": "51",
 };
 
 export const KIDS_UK_EU: Record<string, string> = {
@@ -281,7 +283,7 @@ export function sizesFor(look: string): string[] {
   if (look.startsWith("Kids")) {
     return ["10", "11", "12", "13", "1", "2", "3", "4", "5"];
   }
-  return Array.from({ length: 12 }, (_, i) => String(i + 4));
+  return ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
 }
 
 export function defaultSize(look: string): string {

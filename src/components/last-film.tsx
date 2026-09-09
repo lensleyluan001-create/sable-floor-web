@@ -107,9 +107,8 @@ export function LastFilm({ look, count }: { look: string; count: number }) {
             {count} {count === 1 ? "pair" : "pairs"}
           </p>
           <div className="max-w-[26rem]">
-            <p className="font-sans text-[11px] tracking-[0.28em] text-dust uppercase">{name}</p>
-            <h2 className="font-display mt-2 text-[1.65rem] leading-[0.98] font-medium tracking-[-0.03em] text-paper sm:text-[1.9rem]">
-              {current.title}
+            <h2 className="font-display text-[1.65rem] leading-[0.98] font-medium tracking-[-0.03em] text-paper sm:text-[1.9rem]">
+              {name}
             </h2>
             <p className="mt-2 max-w-[28em] font-sans text-[14px] leading-relaxed text-paper-2">{current.line}</p>
             {n > 1 ? (

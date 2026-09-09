@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { displayLook, isTwoToneSku, type Pair } from "@/lib/catalog";
+import { displayLook, isTwoToneSku, pairTitle, type Pair } from "@/lib/catalog";
 
 export type PhotoSlide = {
   src: string;
@@ -39,7 +39,7 @@ function useDragScroll() {
     const el = ref.current;
     if (!el) return;
     const dx = e.clientX - drag.current.x;
-    if (Math.abs(dx) > 16) moved.current = true;
+    if (Math.abs(dx) > 40) moved.current = true;
     el.scrollLeft = drag.current.left - dx;
   };
 
@@ -47,7 +47,7 @@ function useDragScroll() {
     if (!drag.current.on) return;
     const el = ref.current;
     const dx = el ? Math.abs((drag.current.left || 0) - el.scrollLeft) : 0;
-    if (dx < 16) moved.current = false;
+    if (dx < 40) moved.current = false;
     drag.current.on = false;
     snap();
   };
@@ -195,14 +195,13 @@ export function PairStrip({
             />
             <div className="px-3.5 pt-3 pb-3.5">
               <p className="font-display m-0 text-lg tracking-[-0.02em] text-ink">
-                {displayLook(pair.look)}
+                {pairTitle(pair)}
                 {isTwoToneSku(pair.sku) ? (
                   <span className="ml-2 align-middle font-sans text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
                     Two-tone
                   </span>
                 ) : null}
               </p>
-              <p className="mt-0.5 font-sans text-[13px] text-muted">No. {pair.sku}</p>
               <p className="font-display mt-2 text-right text-base tracking-[-0.02em] text-ink">R{pair.price}</p>
             </div>
           </button>

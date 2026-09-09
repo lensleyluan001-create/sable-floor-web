@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { extraPrice, pairTitle, type Pair } from "@/lib/catalog";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { extraPrice, pairTitle, type Pair } from "./catalog";
 
 export type OrderLine = {
   id: string;
@@ -31,43 +32,71 @@ type OrderState = {
   name: string;
   phone: string;
   delivery: Delivery;
+  justAdded: string | null;
   add: (pair: Pair, size: string, hide: string, extras: string[], spec?: string) => void;
   remove: (id: string) => void;
   setName: (name: string) => void;
   setPhone: (phone: string) => void;
   setDelivery: (delivery: Delivery) => void;
+  clearJustAdded: () => void;
   clear: () => void;
 };
 
-export const useOrder = create<OrderState>()((set) => ({
-  lines: [],
-  name: "",
-  phone: "",
-  delivery: "collect",
-  add: (pair, size, hide, extras, spec = "") =>
-    set((s) => ({
-      lines: [
-        ...s.lines,
-        {
-          id: `${pair.sku}-${Date.now()}`,
-          sku: pair.sku,
-          look: pair.look,
-          title: pairTitle(pair),
-          pairPrice: pair.price,
-          price: pair.price + extraPrice(extras),
-          size,
-          hide,
-          extras,
-          spec: spec.trim(),
-        },
-      ],
-    })),
-  remove: (id) => set((s) => ({ lines: s.lines.filter((l) => l.id !== id) })),
-  setName: (name) => set({ name }),
-  setPhone: (phone) => set({ phone }),
-  setDelivery: (delivery) => set({ delivery }),
-  clear: () => set({ lines: [] }),
-}));
+export const useOrder = create<OrderState>()(
+  persist(
+    (set) => ({
+      lines: [],
+      name: "",
+      phone: "",
+      delivery: "collect",
+      justAdded: null,
+      add: (pair, size, hide, extras, spec = "") =>
+        set((s) => ({
+          justAdded: pairTitle(pair),
+          lines: [
+            ...s.lines,
+            {
+              id: `${pair.sku}-${Date.now()}`,
+              sku: pair.sku,
+              look: pair.look,
+              title: pairTitle(pair),
+              pairPrice: pair.price,
+              price: pair.price + extraPrice(extras),
+              size,
+              hide,
+              extras,
+              spec: spec.trim(),
+            },
+          ],
+        })),
+      remove: (id) => set((s) => ({ lines: s.lines.filter((l) => l.id !== id) })),
+      setName: (name) => set({ name }),
+      setPhone: (phone) => set({ phone }),
+      setDelivery: (delivery) => set({ delivery }),
+      clearJustAdded: () => set({ justAdded: null }),
+      clear: () => set({ lines: [], justAdded: null }),
+    }),
+    {
+      name: "sable-order-v1",
+      storage: createJSONStorage(() => {
+        if (typeof localStorage === "undefined") {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
+        return localStorage;
+      }),
+      partialize: (s) => ({
+        lines: s.lines,
+        name: s.name,
+        phone: s.phone,
+        delivery: s.delivery,
+      }),
+    },
+  ),
+);
 
 export function orderTotal(lines: OrderLine[], delivery: Delivery = "collect"): number {
   return lines.reduce((sum, line) => sum + line.price, 0) + deliveryFee(delivery);
@@ -110,27 +139,40 @@ export function orderMessage(
     .join("\n");
 }
 
-export const LEAD_URL = "https://sable-floor.vercel.app/api/lead";
+export const DESK_LEAD_URL = "https://sable-floor.vercel.app/api/lead";
+export const LEAD_URL = "/api/lead";
+export const SABLE_WHATSAPP = "27826001950";
 
-export async function submitOrder(opts: {
+export function whatsappOrderUrl(
+  lines: OrderLine[],
+  name: string,
+  phone: string,
+  delivery: Delivery = "collect",
+): string {
+  return `https://wa.me/${SABLE_WHATSAPP}?text=${encodeURIComponent(orderMessage(lines, name, phone, delivery))}`;
+}
+
+export function orderPayload(opts: {
   lines: OrderLine[];
   name: string;
   phone: string;
   delivery: Delivery;
-}): Promise<void> {
+}) {
   const { lines, name, phone, delivery } = opts;
   const fee = deliveryFee(delivery);
   const first = lines[0];
-  const body = {
+  return {
     name: name.trim(),
     phone: phone.trim(),
     sku: first?.sku || "",
     look: first?.look || "",
     size: first?.size || "",
-    qty: lines.length,
+    qty: 1,
+    pairCount: lines.length,
     items: lines.map((line) => ({
       sku: line.sku,
       look: line.look,
+      title: line.title,
       size: line.size,
       qty: 1,
       colour: line.hide,
@@ -156,7 +198,16 @@ export async function submitOrder(opts: {
     nextAction: "Send the first WhatsApp",
     note: lines
       .map((l) =>
-        [l.title, l.sku, `UK${l.size}`, l.hide, l.spec, l.extras.filter((x) => ["laces", "stitch", "elastic", "sole", "lining", "hardware", "laser"].includes(x)).join(",") || "none", `R${l.price}`]
+        [
+          l.title,
+          l.sku,
+          `UK${l.size}`,
+          l.hide,
+          l.spec,
+          l.extras.filter((x) => ["laces", "stitch", "elastic", "sole", "lining", "hardware", "laser"].includes(x)).join(",") ||
+            "none",
+          `R${l.price}`,
+        ]
           .filter(Boolean)
           .join(" "),
       )
@@ -164,10 +215,27 @@ export async function submitOrder(opts: {
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
-  const res = await fetch(LEAD_URL, {
+}
+
+async function postLead(url: string, body: unknown): Promise<void> {
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error("Could not send");
+}
+
+export async function submitOrder(opts: {
+  lines: OrderLine[];
+  name: string;
+  phone: string;
+  delivery: Delivery;
+}): Promise<void> {
+  const body = orderPayload(opts);
+  try {
+    await postLead(LEAD_URL, body);
+  } catch {
+    await postLead(DESK_LEAD_URL, body);
+  }
 }

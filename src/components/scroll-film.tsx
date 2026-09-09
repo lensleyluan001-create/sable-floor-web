@@ -388,8 +388,7 @@ export function OrderSlip({
       if (!res.ok) throw new Error("send");
       setSent(true);
     } catch {
-      window.location.href = wa;
-      setError("Could not send on the site. Opening WhatsApp to Sable.");
+      setError("The floor did not pick this up. Keep this form, or WhatsApp Sable.");
     } finally {
       setBusy(false);
     }
