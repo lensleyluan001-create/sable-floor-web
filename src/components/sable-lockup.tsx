@@ -3,6 +3,8 @@ import { UserButton } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { SableMark } from "@/components/sable-mark";
 
+const FLOOR_LOGIN = "https://sable-floor.vercel.app/login";
+
 export function SableLockup({
   tone = "paper",
   withAccount = true,
@@ -19,13 +21,24 @@ export function SableLockup({
     user.id === "dev-user" ||
     user.displayName === "Dev User";
   const showAccount = withAccount && !fake;
+  const mark = (
+    <>
+      <SableMark className="h-7 w-7" />
+      <span className="font-sans text-[11px] font-medium tracking-[0.42em]">SABLE</span>
+    </>
+  );
 
   return (
     <div className={`flex items-center gap-2 ${color}`}>
-      <Link to="/" aria-label="SABLE — collection" className="flex min-h-11 items-center gap-2">
-        <SableMark className="h-7 w-7" />
-        <span className="font-sans text-[11px] font-medium tracking-[0.42em]">SABLE</span>
-      </Link>
+      {import.meta.env.PROD ? (
+        <Link to="/" aria-label="SABLE — collection" className="flex min-h-11 items-center gap-2">
+          {mark}
+        </Link>
+      ) : (
+        <a href="/login" aria-label="SABLE — staff desk" className="flex min-h-11 items-center gap-2">
+          {mark}
+        </a>
+      )}
       {showAccount && isPending ? (
         <span className={`hidden h-8 w-8 animate-pulse rounded-full sm:inline-block ${chip}`} />
       ) : null}
@@ -37,3 +50,4 @@ export function SableLockup({
     </div>
   );
 }
+

@@ -167,7 +167,7 @@ export function orderPayload(opts: {
     sku: first?.sku || "",
     look: first?.look || "",
     size: first?.size || "",
-    qty: 1,
+    qty: lines.length,
     pairCount: lines.length,
     items: lines.map((line) => ({
       sku: line.sku,
@@ -184,7 +184,7 @@ export function orderPayload(opts: {
         sole: line.extras.includes("sole"),
         lining: line.extras.includes("lining"),
         hardware: line.extras.includes("hardware"),
-        custom: Boolean(line.spec),
+        custom: Boolean(line.spec) && !line.extras.some((x) => ["laces", "stitch", "elastic", "sole", "lining", "hardware", "laser"].includes(x) || x.startsWith("Laser")),
         customNote: line.spec || "",
       },
       listed: line.price,
