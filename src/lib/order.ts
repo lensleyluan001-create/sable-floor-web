@@ -27,6 +27,37 @@ export function deliveryFee(id: Delivery): number {
   return DELIVERY.find((d) => d.id === id)?.fee ?? 0;
 }
 
+const KNOWN_EXTRAS = ["laces", "stitch", "elastic", "sole", "lining", "hardware", "laser"] as const;
+
+function colourFromSpec(spec: string, key: string, fallback: string) {
+  const m = String(spec || "").match(new RegExp(key + "\\s+([A-Za-z]+)", "i"));
+  let v = (m?.[1] || fallback).toLowerCase();
+  if (v === "rawhide") v = "natural";
+  return v;
+}
+
+function extrasObject(line: OrderLine) {
+  const extras = line.extras;
+  const knownOn = extras.some((x) => KNOWN_EXTRAS.includes(x as (typeof KNOWN_EXTRAS)[number]) || x.startsWith("Laser"));
+  return {
+    laser: extras.includes("laser") || extras.some((x) => x.startsWith("Laser")),
+    laces: extras.includes("laces"),
+    laceColour: extras.includes("laces") ? colourFromSpec(line.spec, "Laces", "natural") : "natural",
+    stitch: extras.includes("stitch"),
+    stitchColour: extras.includes("stitch") ? colourFromSpec(line.spec, "Stitch", "cream") : "cream",
+    elastic: extras.includes("elastic"),
+    elasticColour: extras.includes("elastic") ? colourFromSpec(line.spec, "Elastic", "cream") : "cream",
+    sole: extras.includes("sole"),
+    soleKind: extras.includes("sole") ? colourFromSpec(line.spec, "Sole", "leather") : "leather",
+    lining: extras.includes("lining"),
+    liningKind: extras.includes("lining") ? colourFromSpec(line.spec, "Lining", "leather") : "leather",
+    hardware: extras.includes("hardware"),
+    hardwareKind: extras.includes("hardware") ? colourFromSpec(line.spec, "Hardware", "brass") : "brass",
+    custom: Boolean(line.spec) && !knownOn,
+    customNote: line.spec || "",
+  };
+}
+
 type OrderState = {
   lines: OrderLine[];
   name: string;
@@ -176,17 +207,7 @@ export function orderPayload(opts: {
       size: line.size,
       qty: 1,
       colour: line.hide,
-      extras: {
-        laser: line.extras.includes("laser") || line.extras.some((x) => x.startsWith("Laser")),
-        laces: line.extras.includes("laces"),
-        stitch: line.extras.includes("stitch"),
-        elastic: line.extras.includes("elastic"),
-        sole: line.extras.includes("sole"),
-        lining: line.extras.includes("lining"),
-        hardware: line.extras.includes("hardware"),
-        custom: Boolean(line.spec) && !line.extras.some((x) => ["laces", "stitch", "elastic", "sole", "lining", "hardware", "laser"].includes(x) || x.startsWith("Laser")),
-        customNote: line.spec || "",
-      },
+      extras: extrasObject(line),
       listed: line.price,
     })),
     delivery,

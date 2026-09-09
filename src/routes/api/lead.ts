@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const CRM = "https://sable-floor.vercel.app/api/lead";
 const cors = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Methods": "GET,POST,PATCH,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
   "Cache-Control": "no-store",
 };
@@ -49,11 +49,45 @@ async function post({ request }: { request: Request }) {
   return json({ ok: true, floor, lead }, 201);
 }
 
+async function patch({ request }: { request: Request }) {
+  let body: Record<string, unknown> = {};
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return json({ ok: false, error: "bad json" }, 400);
+  }
+  const id = String(body.id || "").trim();
+  if (!id) return json({ ok: false, error: "id required" }, 400);
+  const allowed = {
+    id,
+    proofUrl: body.proofUrl,
+    proofAt: body.proofAt || Date.now(),
+    proofBy: "client",
+    proofStatus: "in",
+    nextAction: "Proof attached — verify EFT",
+    nextActionAt: null,
+    sitAt: Date.now(),
+    paid: false,
+    updatedAt: Date.now(),
+  };
+  try {
+    const res = await fetch(CRM, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(allowed),
+    });
+    return json({ ok: res.ok }, res.ok ? 200 : 502);
+  } catch {
+    return json({ ok: false }, 502);
+  }
+}
+
 export const Route = createFileRoute("/api/lead")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
       POST: post,
+      PATCH: patch,
       GET: async () => json({ ok: true, n: bag.leads.length }),
     },
   },

@@ -8,6 +8,7 @@ import { PairStrip } from "@/components/photo-carousel";
 import { ProcessFilm } from "@/components/process-film";
 import { LastFilm } from "@/components/last-film";
 import { SableLockup } from "@/components/sable-lockup";
+import { ProofDrop } from "@/components/proof-drop";
 import { ORDER_LASTS, filmSrc, themeForLook } from "@/lib/film";
 import { PROCESS_CHAPTERS } from "@/lib/process";
 
@@ -19,10 +20,16 @@ export function Collection() {
   const [review, setReview] = useState(false);
   const [help, setHelp] = useState(false);
   const [clerk, setClerk] = useState<{ pair?: Pair; draft?: SpecDraft; locked: boolean } | null>(null);
+  const [proofId, setProofId] = useState("");
   const lines = useOrder((s) => s.lines);
   const delivery = useOrder((s) => s.delivery);
   const justAdded = useOrder((s) => s.justAdded);
   const clearJustAdded = useOrder((s) => s.clearJustAdded);
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    setProofId(q.get("proof") || q.get("ref") || "");
+  }, []);
 
   const groups = useMemo(() => {
     const shop = SHOP_FILTERS.find((f) => f.id === filter);
@@ -64,6 +71,7 @@ export function Collection() {
 
   return (
     <div className="collection min-h-dvh bg-bone font-body text-ink">
+      {proofId ? <ProofDrop token={proofId} /> : null}
       <a
         href="#grid"
         className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-paper focus:px-3 focus:py-2"
